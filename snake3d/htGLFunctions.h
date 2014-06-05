@@ -71,35 +71,6 @@
 #endif
 #endif
 
-typedef bool (*htEnableFunction)(void*);
-typedef bool (*htDisableFunction)(void*);
-
-typedef bool (*htBufferLoadFun)(const char* sourceName, void** bufferData, GLint* w, GLint* h, HTBufferFormat* fmt, void* arg);
-typedef bool (*htBufferUnloadFun)(void* bufferData, void* arg);
-
-void htSetGLEnableFunction(htEnableFunction func, void* param);
-void htSetGLDisableFunction(htDisableFunction func, void* param);
-void* htGetCurrentEnableFunctionParam();
-void* htGetCurrentDisableFunctionParam();
-void htStopGlobalEnableFunction();
-void htRestoreGlobalEnableFunction();
-
-bool htEnableOpenGL();
-bool htDisableOpenGL();
-
-void htGetDataAndChannelByFormat(HTBufferFormat fmt, GLenum* dataFmt, GLenum* channelFmt, GLint* channel);
-
-//You can set a common function for loading textures
-void htSetCommonLoadFunction(htBufferLoadFun fun, void* arg);
-void htSetCommonUnloadFunction(htBufferUnloadFun fun, void* arg);
-
-bool htLoadResourceCommon(const char* sourceName, void** bufferData, GLint* w, GLint* h, GLenum* format, GLenum* type);
-htBufferLoadFun htGetCommonLoadFunc();
-void* htGetCommonLoadArg();
-bool htUnloadResourceCommon(void* bufferData);
-htBufferUnloadFun htGetCommonUnloadFunc();
-void* htGetCommonUnloadArg();
-
 GLuint htGenTextureWithBuffer(const void* bufferData, GLint w, GLint h, GLenum channelFmt, GLenum dataFmt);
 
 char* htGetScaleBuffer(const void* buffer, int& w, int& h, int channel, int maxSize);

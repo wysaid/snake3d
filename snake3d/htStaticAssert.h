@@ -7,7 +7,7 @@
 #ifndef _HT_STATICASSERT_H_
 #define _HT_STATICASSERT_H_
 
-#ifndef _USE_HTSTATIC_ASSERT_
+#ifndef _USE_CXX11_STATIC_ASSERT_
 
 #define htStaticAssert(value) static_assert(value, "Invalid Parameters!")
 

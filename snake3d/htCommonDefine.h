@@ -11,10 +11,6 @@
 
 #include "htPlatform_QT.h"
 
-#define HT_SDK_VERSION "0.5.0.1"
-
-const char* htGetVersion();
-
 enum HTBufferFormat
 {
 	HT_FORMAT_RGB_INT8, 
@@ -69,50 +65,6 @@ enum HTTextureBlendMode
 	HT_BLEND_TYPE_MAX_NUM //Its value defines the max num of blend.
 };
 
-const char* htGetBlendModeName(HTTextureBlendMode mode);
-
-struct HTSizei
-{
-	HTSizei(): width(0), height(0) {}
-	HTSizei(int w, int h) : width(w), height(h) {}
-	void set(int w, int h)
-	{
-		width = w;
-		height = h;
-	}
-	GLint width;
-	GLint height;
-};
-
-struct HTSizef
-{
-	HTSizef() : width(0.0f), height(0.0f) {}
-	HTSizef(float w, float h) : width(w), height(h) {}
-	void set(float w, float h)
-	{
-		width = w;
-		height = h;
-	}
-	GLfloat width;
-	GLfloat height;
-};
-
-struct HTVec3i
-{
-	HTVec3i() : x(0), y(0), z(0) {}
-	HTVec3i(int vx, int vy, int vz) : x(vx), y(vy), z(vz) {}
-	int x, y, z;	
-};
-
-struct HTVec3f
-{
-	HTVec3f() : x(0.0f), y(0.0f), z(0.0f) {}
-	HTVec3f(float vx, float vy, float vz) :
-		x(vx), y(vy), z(vz) {}
-	float x, y, z;
-};
-
-#define UNIFORM_MAX_LEN 32
 
 void htPrintGLString(const char*, GLenum);
 void _htCheckGLError(const char* name, const char* file, int line);

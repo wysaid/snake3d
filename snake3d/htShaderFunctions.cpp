@@ -10,14 +10,6 @@
 #include "htGLFunctions.h"
 #include "htShaderFunctions.h"
 
-#include <cstring>
-
-enum GLOBAL_GL_EXCEPTION 
-{
-	expCreateShaderFailed, expCreateProgramFailed, expShaderFileTooLarge,
-	expLinkProgramFailed
-};
-
 #define GETUNIFORM(uniform, programID, name) \
 GLint uniform = glGetUniformLocation(programID, name);\
 if(uniform < 0) \
@@ -215,7 +207,6 @@ bool ProgramObject::link()
 
 void ProgramObject::bind()
 {
-	htEnableOpenGL();
 	glUseProgram(m_programID);
 	//LOG_INFO("USE PROGRAM!!!! -->%d", m_programID);
 }

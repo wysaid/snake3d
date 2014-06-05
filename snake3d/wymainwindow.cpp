@@ -12,9 +12,17 @@ WYMainWindow::WYMainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
+	m_scene = new SceneWindow(ui.centralWidget);
 }
 
 WYMainWindow::~WYMainWindow()
 {
+	delete m_scene;
+}
 
+
+void WYMainWindow::resizeEvent(QResizeEvent *e)
+{
+	ui.centralWidget->setGeometry(0, 0, width(), height());
+	m_scene->setGeometry(ui.centralWidget->geometry());
 }

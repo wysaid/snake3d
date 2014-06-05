@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 	WYMainWindow w;
+	w.setWindowTitle(QString::fromLocal8Bit("Snake3D - by wysaid"));
 	w.show();
 	htPrintGLString("Vendor: ", GL_VENDOR);
 	htPrintGLString("Renderer: ", GL_RENDERER);
