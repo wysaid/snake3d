@@ -18,8 +18,9 @@
 
 
 #include "ui_wymainwindow.h"
-#include "htGLFunctions.h"
 #include "scenewindow.h"
+
+class SceneWindow;
 
 class WYMainWindow : public QMainWindow
 {
@@ -29,8 +30,13 @@ public:
 	WYMainWindow(QWidget *parent = 0);
 	~WYMainWindow();
 
+protected:
+	void resizeEvent(QResizeEvent *);
+
 private:
 	Ui::WYMainWindowClass ui;
+
+	SceneWindow* m_scene;
 };
 
 #endif // WYMAINWINDOW_H
