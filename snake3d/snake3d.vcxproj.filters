@@ -36,6 +36,16 @@
     <Filter Include="Utility">
       <UniqueIdentifier>{e75fe278-e2bd-43de-be3e-45624fc37f4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Generated Files\OpenGL-debug">
+      <UniqueIdentifier>{5dd0467d-b976-485a-82c7-7587b31ed012}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\OpenGL-release">
+      <UniqueIdentifier>{c78b7d7d-f094-4f2c-8b6c-bcdfc3fe8eb5}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -44,25 +54,25 @@
     <ClCompile Include="wymainwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_wymainwindow.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scenewindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_wymainwindow.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_wymainwindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\qrc_wymainwindow.cpp">
-      <Filter>Generated Files</Filter>
+    <ClCompile Include="GeneratedFiles\OpenGL-debug\moc_wymainwindow.cpp">
+      <Filter>Generated Files\OpenGL-debug</Filter>
     </ClCompile>
-    <ClCompile Include="htCommonDefine.cpp">
-      <Filter>Utility</Filter>
+    <ClCompile Include="GeneratedFiles\OpenGL-release\moc_wymainwindow.cpp">
+      <Filter>Generated Files\OpenGL-release</Filter>
     </ClCompile>
-    <ClCompile Include="htGLFunctions.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="htShaderFunctions.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="scenewindow.cpp">
+    <ClCompile Include="ground.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -81,28 +91,19 @@
     <ClInclude Include="GeneratedFiles\ui_wymainwindow.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="htCommonDefine.h">
+    <ClInclude Include="htPlatform_QT.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="scenewindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stages.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="htGLFunctions.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="htMat.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="htPlatform_QT.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="htShaderFunctions.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="htStaticAssert.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="htVec.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="scenewindow.h">
+    <ClInclude Include="ground.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -8,7 +8,7 @@ QT       += core gui
 QT       += opengl
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = SDKDemo_QTCreator
+TARGET = snake3d
 TEMPLATE = app
 
 #INCLUDEPATH += "."
@@ -20,19 +20,13 @@ RESOURCES += wymainwindow.qrc
 SOURCES += main.cpp\
     wymainwindow.cpp \
     scenewindow.cpp \
-    htCommonDefine.cpp \
-    htShaderFunctions.cpp \
-    htGLFunctions.cpp
+    ground.cpp\
 
 HEADERS  += wymainwindow.h \
     scenewindow.h \
     htPlatform_QT.h \
-    htCommonDefine.h \
     htGLFunctions.h \
-    htShaderFunctions.h \
-    htMat.h \
-    htVec.h \
-    htStaticAssert.h \
+    ground.h \
 
 FORMS    += wymainwindow.ui
 

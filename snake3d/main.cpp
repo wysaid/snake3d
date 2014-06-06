@@ -15,8 +15,9 @@ int main(int argc, char *argv[])
 	WYMainWindow w;
 	w.setWindowTitle(QString::fromLocal8Bit("Snake3D - by wysaid"));
 	w.show();
-	htPrintGLString("Vendor: ", GL_VENDOR);
-	htPrintGLString("Renderer: ", GL_RENDERER);
-	htPrintGLString("Version: ", GL_VERSION);
+	LOG_INFO("GL_INFO %s = %s\n", "Vendor: ", glGetString(GL_VENDOR));
+	LOG_INFO("GL_INFO %s = %s\n", "Version: ", glGetString(GL_VERSION));
+	LOG_INFO("GL_INFO %s = %s\n", "Renderer: ", glGetString(GL_RENDERER));
+
 	return a.exec();
 }

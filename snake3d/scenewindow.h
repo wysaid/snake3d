@@ -10,18 +10,22 @@
 #define _SCENE_WINDOW_H_
 
 #include "wymainwindow.h"
+
 #include "htGLFunctions.h"
 
 
 class WYMainWindow;
 
 class QGLWidget;
+class QGLFunctions;
 
 class SceneWindow : public QGLWidget
 {
 public:
 	SceneWindow(QWidget* parent = NULL);
 	~SceneWindow();
+
+	static GLuint genTextureWithBuffer(const void* bufferData, GLint w, GLint h, GLenum channelFmt, GLenum dataFmt);
 
 protected:
 
@@ -38,8 +42,14 @@ protected:
 	void keyReleaseEvent(QKeyEvent *);
 
 private:
-	ProgramObject* m_program;
+	QOpenGLShaderProgram* m_program;
+	QMatrix4x4 m_modelView, m_projection;
 
 };
+
+extern SceneWindow* g_sceneWindow;
+extern QGLFunctions* g_glFunctions;
+
+
 
 #endif

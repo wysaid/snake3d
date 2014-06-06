@@ -9,6 +9,9 @@
 
 #include "scenewindow.h"
 
+SceneWindow* g_sceneWindow = NULL;
+QGLFunctions* g_glFunctions = NULL;
+
 const char* const s_vshScene = SHADER_STRING
 (
 attribute vec3 vPosition;
@@ -31,6 +34,11 @@ void main()
 
 SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent)
 {
+	if(g_sceneWindow != NULL)
+	{
+		LOG_ERROR("Invalid Usage!\n");
+	}
+	g_sceneWindow = this;
 	setAttribute(Qt::WA_PaintOnScreen);
 	setAttribute(Qt::WA_NoSystemBackground);
 	setAutoBufferSwap(false);
@@ -51,18 +59,18 @@ void SceneWindow::paintGL()
 
 void SceneWindow::initializeGL()
 {
-	m_program = new ProgramObject;
+	g_glFunctions = context()->functions();
 
-	if(!(m_program->initVertexShaderSourceFromString(s_vshScene) && 
-		m_program->initFragmentShaderSourceFromString(s_fshScene) &&
+	m_program = new QOpenGLShaderProgram;
+
+	if(!(m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshScene) &&
+		m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshScene) &&
 		m_program->link()))
 	{
-		LOG_ERROR("Init Shader Program Failed!\n");
+		LOG_ERROR("Program link failed!\n");
 	}
 
-	m_program->bind();
-
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.2f, 0.2f, 0.1f, 1.0f);
 }
 
 void SceneWindow::resizeGL(int w, int h)
@@ -96,6 +104,27 @@ void SceneWindow::keyPressEvent(QKeyEvent *e)
 }
 
 void SceneWindow::keyReleaseEvent(QKeyEvent *)
+{
+
+}
+
+GLuint SceneWindow::genTextureWithBuffer(const void* bufferData, GLint w, GLint h, GLenum channelFmt, GLenum dataFmt)
+{
+	GLuint tex;
+
+    glActiveTexture(GL_TEXTURE0);
+
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, channelFmt, dataFmt, bufferData);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	return tex;
+}
+
+void resolveOpenGLFunctions()
 {
 
 }

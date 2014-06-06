@@ -11,12 +11,19 @@
 
 #include <QOpenGLFunctions_ES2>
 #include <qgl.h>
+#include <QOpenGLShaderProgram>
+#include <QGLFunctions>
+#include <QGLContext>
+#include <QVector>
+#include <QMatrix>
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 
 #if _MSC_VER > 1600 && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
+
+#if defined(DEBUG) || defined(_DEBUG)
 
 #include <cstdio>
 #include <windows.h>
@@ -51,6 +58,14 @@ fprintf(stderr, __VA_ARGS__);\
 fflush(stderr);\
 }while(0)
 #define LOG_CODE(...) __VA_ARGS__
+
+#else
+
+#define LOG_ERROR(...)
+#define LOG_CODE(...)
+#define LOG_INFO(...)
+
+#endif
 
 #elif defined(Q_OS_OSX)
 
