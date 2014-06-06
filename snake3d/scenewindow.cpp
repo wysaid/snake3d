@@ -64,12 +64,13 @@ void SceneWindow::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	QMatrix4x4 qmat = m_modelView * m_projection;
+	QMatrix4x4 qmat = m_projection * m_modelView;
 
 	m_ground->drawGround(qmat);
 	m_ground->drawGroundWithMesh(qmat);
 
 	swapBuffers();
+	m_modelView.rotate(0.5f, 0.0f, 0.0f, 1.0f);
 }
 
 void SceneWindow::initializeGL()
@@ -97,11 +98,14 @@ void SceneWindow::initializeGL()
 
 	glClearColor(0.2f, 0.2f, 0.1f, 1.0f);
 
-	initOrtho();
-	//initPerspective();
+//	initOrtho();
+	initPerspective();
 
 	m_ground = new Ground;
 	m_ground->initWithStage(g_stage1, g_stage1Width, g_stage1Height);
+	QTimer *timer = new QTimer(this);
+	connect(timer, SIGNAL(timeout()), SLOT(updateGL()));
+	timer->start(30);
 }
 
 void SceneWindow::resizeGL(int w, int h)
@@ -157,8 +161,7 @@ void SceneWindow::initOrtho()
 {
 	m_modelView.setToIdentity();
 	m_projection.ortho(-1.0, 1.0, -1.0, 1.0, 1.0, -1.0);
-
-	m_modelView.scale(0.5);
+	m_modelView.lookAt(QVector3D(0.0f, 0.0f, 0.1f), QVector3D(0.0f, -100.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f));
 }
 
 void SceneWindow::initPerspective()
@@ -166,9 +169,11 @@ void SceneWindow::initPerspective()
 	float aspectRatio = width() / float(height());
 	float z = HT_MIN(width(), height());
 	
-	m_projection.perspective(45.0f, aspectRatio, 0.1f, 100.0f);
+	m_projection.setToIdentity();
+	m_modelView.setToIdentity();
+
+	m_projection.perspective(60.0f, aspectRatio, .1f, 10000.0f);
 	//m_projection.ortho(-1.0, 1.0, -1.0, 1.0, 1.0, -1.0);
-	m_modelView.lookAt(QVector3D(0.0f, 0.0f, 10.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector3D(0.0f, 1.0f, 0.0f));
-	
-	m_modelView.scale(0.5);
+	m_modelView.lookAt(QVector3D(0.0f, 0.0f, 0.1f), QVector3D(0.0f, -100.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f));
+
 }

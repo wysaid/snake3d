@@ -14,6 +14,7 @@
 #include "htGLFunctions.h"
 #include "stages.h"
 #include "ground.h"
+#include <QTimer>
 
 #include <vector>
 
@@ -27,6 +28,7 @@ class Ground;
 
 class SceneWindow : public QGLWidget
 {
+	Q_OBJECT
 public:
 	SceneWindow(QWidget* parent = NULL);
 	~SceneWindow();

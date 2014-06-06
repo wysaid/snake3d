@@ -8,7 +8,6 @@
 
 #include "ground.h"
 
-
 static const char* const s_vshGround = SHADER_STRING
 (
 attribute vec4 vPosition;
