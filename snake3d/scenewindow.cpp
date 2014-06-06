@@ -111,9 +111,7 @@ void SceneWindow::keyReleaseEvent(QKeyEvent *)
 GLuint SceneWindow::genTextureWithBuffer(const void* bufferData, GLint w, GLint h, GLenum channelFmt, GLenum dataFmt)
 {
 	GLuint tex;
-
     glActiveTexture(GL_TEXTURE0);
-
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, channelFmt, dataFmt, bufferData);

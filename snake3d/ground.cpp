@@ -26,5 +26,6 @@ bool Ground::initWithStage(const int *stage, int w, int h)
 
 void Ground::clearGround()
 {
-	//glDeleteBuffers()
+	glDeleteBuffers(1, &m_groundVBO);
+	m_groundVBO = 0;
 }
