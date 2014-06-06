@@ -22,7 +22,16 @@ void main()
 }
 );
 
-const char* const s_fshScene = SHADER_STRING_PRECISION_M
+const char* const s_fshSceneNormal = SHADER_STRING_PRECISION_M
+(
+
+void main()
+{
+	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+}
+);
+
+const char* const s_fshSceneMesh = SHADER_STRING_PRECISION_M
 (
 
 void main()
@@ -32,7 +41,7 @@ void main()
 );
 
 
-SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent)
+SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL)
 {
 	if(g_sceneWindow != NULL)
 	{
@@ -46,7 +55,8 @@ SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent)
 
 SceneWindow::~SceneWindow()
 {
-	delete m_program;
+	delete m_programDrawNormal;
+	delete m_programDrawMesh;
 }
 
 void SceneWindow::paintGL()
@@ -59,13 +69,23 @@ void SceneWindow::paintGL()
 
 void SceneWindow::initializeGL()
 {
+	makeCurrent();
 	g_glFunctions = context()->functions();
 
-	m_program = new QOpenGLShaderProgram;
+	m_programDrawNormal = new QOpenGLShaderProgram;
 
-	if(!(m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshScene) &&
-		m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshScene) &&
-		m_program->link()))
+	if(!(m_programDrawNormal->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshScene) &&
+		m_programDrawNormal->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshSceneNormal) &&
+		m_programDrawNormal->link()))
+	{
+		LOG_ERROR("Program link failed!\n");
+	}
+
+	m_programDrawMesh = new QOpenGLShaderProgram;
+
+	if(!(m_programDrawMesh->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshScene) &&
+		m_programDrawMesh->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshSceneMesh) &&
+		m_programDrawMesh->link()))
 	{
 		LOG_ERROR("Program link failed!\n");
 	}

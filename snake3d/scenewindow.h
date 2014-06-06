@@ -12,6 +12,7 @@
 #include "wymainwindow.h"
 
 #include "htGLFunctions.h"
+#include <vector>
 
 
 class WYMainWindow;
@@ -42,7 +43,7 @@ protected:
 	void keyReleaseEvent(QKeyEvent *);
 
 private:
-	QOpenGLShaderProgram* m_program;
+	QOpenGLShaderProgram *m_programDrawNormal, *m_programDrawMesh;
 	QMatrix4x4 m_modelView, m_projection;
 
 };
