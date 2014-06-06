@@ -8,9 +8,12 @@
 
 #include "wymainwindow.h"
 
+WYMainWindow* g_mainwindow;
+
 WYMainWindow::WYMainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
+	g_mainwindow = this;
 	ui.setupUi(this);
 	m_scene = new SceneWindow(ui.centralWidget);
 }

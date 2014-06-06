@@ -568,4 +568,58 @@ using namespace snake3D_OpenGLFunctions;
 
 #endif
 
+namespace Snake3D
+{
+	inline void _htCheckGLError(const char* name, const char* file, int line)
+	{
+		for (GLint error = glGetError(); error; error = glGetError())
+		{		
+			const char* pMsg;
+			switch (error) 
+			{
+			case GL_INVALID_ENUM: pMsg = "invalid enum"; break;
+			case GL_INVALID_FRAMEBUFFER_OPERATION: pMsg = "invalid framebuffer operation"; break;
+			case GL_INVALID_OPERATION: pMsg = "invalid operation"; break;
+			case GL_INVALID_VALUE: pMsg = "invalid value"; break;
+			case GL_OUT_OF_MEMORY: pMsg = "out of memory"; break;
+			default: pMsg = "unknown error";
+			}
+			LOG_ERROR("After %s() glGetError %s(0x%x) at %s:%d\n", name, pMsg, error, file, line);
+		}
+	}
+}
+
+#define htCheckGLError(name) Snake3D::_htCheckGLError(name, __FILE__, __LINE__);
+
+
+#ifndef HT_MIN
+
+template<typename Type>
+inline Type HT_MIN(Type a, Type b)
+{
+	return a < b ? a : b;
+}
+
+#endif
+
+#ifndef HT_MAX
+
+template<typename Type>
+inline Type HT_MAX(Type a, Type b)
+{
+	return a > b ? a : b;
+}
+
+#endif
+
+#ifndef HT_MID
+
+template<typename Type>
+inline Type HT_MID(Type n, Type vMin, Type vMax)
+{
+	return HT_MIN(HT_MAX(n, vMin), vMax);
+}
+
+#endif
+
 #endif /* HTGLFUNCTIONS_H_ */

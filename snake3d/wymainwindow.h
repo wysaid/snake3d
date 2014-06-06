@@ -39,4 +39,6 @@ private:
 	SceneWindow* m_scene;
 };
 
+extern WYMainWindow* g_mainwindow;
+
 #endif // WYMAINWINDOW_H

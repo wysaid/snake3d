@@ -12,13 +12,18 @@
 #include "wymainwindow.h"
 
 #include "htGLFunctions.h"
+#include "stages.h"
+#include "ground.h"
+
 #include <vector>
 
+using namespace Snake3D;
 
 class WYMainWindow;
 
 class QGLWidget;
 class QGLFunctions;
+class Ground;
 
 class SceneWindow : public QGLWidget
 {
@@ -42,10 +47,16 @@ protected:
 	void keyPressEvent(QKeyEvent *);
 	void keyReleaseEvent(QKeyEvent *);
 
+	void initOrtho();
+	void initPerspective();
+
 private:
 	QOpenGLShaderProgram *m_programDrawNormal, *m_programDrawMesh;
 	QMatrix4x4 m_modelView, m_projection;
 
+
+private:
+	Ground* m_ground;
 };
 
 extern SceneWindow* g_sceneWindow;
