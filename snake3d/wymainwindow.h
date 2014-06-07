@@ -13,7 +13,7 @@
 #include <QtOpenGL/QGLWidget>
 #include <QPainter>
 #include <QPaintEngine>
-#include <Qstring>
+#include <QString>
 #include <QtEvents>
 
 
