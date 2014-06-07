@@ -19,6 +19,9 @@
 */
 
 #include "htPlatform_QT.h"
+#include "htStaticAssert.h"
+#include "htVec.h"
+#include "htMat.h"
 
 #define TEXTURE_START_INDEX 2
 #define TEXTURE_START GL_TEXTURE2
@@ -623,3 +626,18 @@ inline Type HT_MID(Type n, Type vMin, Type vMax)
 #endif
 
 #endif /* HTGLFUNCTIONS_H_ */
+
+
+class WYQOpenGLShaderProgram;
+
+class WYQOpenGLShaderProgram : public QOpenGLShaderProgram
+{
+	Q_OBJECT
+public:
+	explicit WYQOpenGLShaderProgram(QObject *parent = 0) : QOpenGLShaderProgram(parent) {}
+	void setUniformValue(const char* name, const HTAlgorithm::Mat4& mat)
+	{
+		int loc = uniformLocation(name);
+		glUniformMatrix4fv(loc, 1, GL_FALSE, mat[0]);
+	}
+};

@@ -65,6 +65,12 @@
     <ClCompile Include="GeneratedFiles\Release\moc_scenewindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_htGLFunctions.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_htGLFunctions.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="wymainwindow.h">
@@ -79,6 +85,9 @@
     <CustomBuild Include="scenewindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="htGLFunctions.h">
+      <Filter>Utility</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_wymainwindow.h">
@@ -90,11 +99,17 @@
     <ClInclude Include="stages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="htGLFunctions.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="ground.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="htMat.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="htStaticAssert.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="htVec.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

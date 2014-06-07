@@ -42,7 +42,7 @@ const char* const Ground::paramVertexPositionName = "vPosition";
 
 Ground::Ground() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0), m_groundIndexSize(0), m_meshIndexSize(0)
 {
-	m_program = new QOpenGLShaderProgram;
+	m_program = new WYQOpenGLShaderProgram;
 
 	if(!(m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGround) &&
 		m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGround) &&
@@ -51,7 +51,7 @@ Ground::Ground() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0),
 		LOG_ERROR("Ground : Program link failed!\n");
 	}
 
-	m_programMesh = new QOpenGLShaderProgram;
+	m_programMesh = new WYQOpenGLShaderProgram;
 
 	if(!(m_programMesh->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGround) &&
 		m_programMesh->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGroundMesh) &&
@@ -191,7 +191,7 @@ void Ground::clearGround()
 
 }
 
-void Ground::drawGround(QMatrix4x4& mvp)
+void Ground::drawGround(HTAlgorithm::Mat4& mvp)
 {
 	m_program->bind();
 	m_program->setUniformValue(paramModelviewMatrixName, mvp);
@@ -206,7 +206,7 @@ void Ground::drawGround(QMatrix4x4& mvp)
 	htCheckGLError("drawGround");
 }
 
-void Ground::drawGroundWithMesh(QMatrix4x4& mvp)
+void Ground::drawGroundWithMesh(HTAlgorithm::Mat4& mvp)
 {
 	m_programMesh->bind();
 	m_programMesh->setUniformValue(paramModelviewMatrixName, mvp);

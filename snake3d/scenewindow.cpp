@@ -41,7 +41,7 @@ void main()
 );
 
 
-SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL)
+SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(1000.0f), m_v2Position(0.0f, 0.0f), m_v2Direction(0.0f, m_farAway)
 {
 	if(g_sceneWindow != NULL)
 	{
@@ -51,6 +51,9 @@ SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNorm
 	setAttribute(Qt::WA_PaintOnScreen);
 	setAttribute(Qt::WA_NoSystemBackground);
 	setAutoBufferSwap(false);
+	m_m4Projection.loadIdentity();
+	updateModelView();
+	grabKeyboard();
 }
 
 SceneWindow::~SceneWindow()
@@ -64,13 +67,12 @@ void SceneWindow::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	QMatrix4x4 qmat = m_projection * m_modelView;
+	HTAlgorithm::Mat4 qmat = m_m4Projection * m_m4ModelView;
 
 	m_ground->drawGround(qmat);
 	m_ground->drawGroundWithMesh(qmat);
 
 	swapBuffers();
-	m_modelView.rotate(0.5f, 0.0f, 0.0f, 1.0f);
 }
 
 void SceneWindow::initializeGL()
@@ -78,7 +80,7 @@ void SceneWindow::initializeGL()
 	makeCurrent();
 	g_glFunctions = context()->functions();
 
-	m_programDrawNormal = new QOpenGLShaderProgram;
+	m_programDrawNormal = new WYQOpenGLShaderProgram;
 
 	if(!(m_programDrawNormal->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshScene) &&
 		m_programDrawNormal->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshSceneNormal) &&
@@ -87,7 +89,7 @@ void SceneWindow::initializeGL()
 		LOG_ERROR("Program link failed!\n");
 	}
 
-	m_programDrawMesh = new QOpenGLShaderProgram;
+	m_programDrawMesh = new WYQOpenGLShaderProgram;
 
 	if(!(m_programDrawMesh->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshScene) &&
 		m_programDrawMesh->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshSceneMesh) &&
@@ -98,24 +100,24 @@ void SceneWindow::initializeGL()
 
 	glClearColor(0.2f, 0.2f, 0.1f, 1.0f);
 
-//	initOrtho();
-	initPerspective();
-
 	m_ground = new Ground;
 	m_ground->initWithStage(g_stage1, g_stage1Width, g_stage1Height);
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), SLOT(updateGL()));
-	timer->start(30);
+	timer->start(20);
 }
 
 void SceneWindow::resizeGL(int w, int h)
 {
 	glViewport(0, 0, w, h);
+	initPerspective(w, h);
 }
 
 void SceneWindow::mousePressEvent(QMouseEvent *e)
 {
-
+	m_bIsMouseDown = true;
+	m_lastX = e->x();
+	m_lastY = e->y();
 }
 
 void SceneWindow::mouseDoubleClickEvent(QMouseEvent *e)
@@ -125,7 +127,19 @@ void SceneWindow::mouseDoubleClickEvent(QMouseEvent *e)
 
 void SceneWindow::mouseMoveEvent(QMouseEvent *e)
 {
+	if(!m_bIsMouseDown)
+		return;
+	
+	using namespace HTAlgorithm;
 
+	//m_modelView.rotateZ((m_lastX - e->x()) / 180.0f);
+
+	m_v2Direction = Mat2::makeRotation((e->x() - m_lastX) / 180.0f) * m_v2Direction;
+
+	m_lastX = e->x();
+	m_lastY = e->y();
+
+	updateModelView();
 }
 
 void SceneWindow::mouseReleaseEvent(QMouseEvent *e)
@@ -135,7 +149,29 @@ void SceneWindow::mouseReleaseEvent(QMouseEvent *e)
 
 void SceneWindow::keyPressEvent(QKeyEvent *e)
 {
+	using namespace HTAlgorithm;
 
+	float motion = 0.1f;
+
+	switch (e->key())
+	{
+	case Qt::Key_Left: case Qt::Key_A:
+		goLeft(motion);
+		break;
+	case Qt::Key_Right: case Qt::Key_D:
+		goRight(motion);
+		break;
+	case Qt::Key_Up: case Qt::Key_W:
+		goForward(motion);
+		break;
+	case Qt::Key_Down: case Qt::Key_S:
+		goBack(motion);
+		break;
+	default:
+		return;
+	}
+
+	updateModelView();
 }
 
 void SceneWindow::keyReleaseEvent(QKeyEvent *)
@@ -157,23 +193,45 @@ GLuint SceneWindow::genTextureWithBuffer(const void* bufferData, GLint w, GLint 
 	return tex;
 }
 
-void SceneWindow::initOrtho()
+void SceneWindow::initOrtho(int w, int h)
 {
-	m_modelView.setToIdentity();
-	m_projection.ortho(-1.0, 1.0, -1.0, 1.0, 1.0, -1.0);
-	m_modelView.lookAt(QVector3D(0.0f, 0.0f, 0.1f), QVector3D(0.0f, -100.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f));
+	m_m4Projection = HTAlgorithm::Mat4::makeOrtho(-1.0, 1.0, -1.0, 1.0, 1.0, -1.0);
 }
 
-void SceneWindow::initPerspective()
-{
-	float aspectRatio = width() / float(height());
+void SceneWindow::initPerspective(int w, int h)
+{	
+	float aspectRatio = w / float(h);
 	float z = HT_MIN(width(), height());
-	
-	m_projection.setToIdentity();
-	m_modelView.setToIdentity();
+	m_m4Projection = HTAlgorithm::Mat4::makePerspective(M_PI / 3.0f, aspectRatio, .1f, 10000.0f);
+}
 
-	m_projection.perspective(60.0f, aspectRatio, .1f, 10000.0f);
-	//m_projection.ortho(-1.0, 1.0, -1.0, 1.0, 1.0, -1.0);
-	m_modelView.lookAt(QVector3D(0.0f, 0.0f, 0.1f), QVector3D(0.0f, -100.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f));
+void SceneWindow::updateModelView()
+{
+	m_m4ModelView = HTAlgorithm::Mat4::makeLookAt(m_v2Position[0], m_v2Position[1], 0.1f, m_v2Direction[0], m_v2Direction[1], 0.0f, 0.0f, 0.0f, 1.0f);
+}
 
+void SceneWindow::goForward(float dis)
+{
+	HTAlgorithm::Vec2f tmp(m_v2Direction);
+	m_v2Position += tmp.normalize() * dis;
+}
+
+void SceneWindow::goBack(float dis)
+{
+	HTAlgorithm::Vec2f tmp(m_v2Direction);
+	m_v2Position -= tmp.normalize() * dis;
+}
+
+void SceneWindow::goLeft(float dis)
+{
+	HTAlgorithm::Vec2f tmp(m_v2Direction);
+	tmp.normalize();
+	m_v2Position += HTAlgorithm::Vec2f(-tmp[1], tmp[0]) * dis;
+}
+
+void SceneWindow::goRight(float dis)
+{
+	HTAlgorithm::Vec2f tmp(m_v2Direction);
+	tmp.normalize();
+	m_v2Position += HTAlgorithm::Vec2f(tmp[1], -tmp[0]) * dis;
 }

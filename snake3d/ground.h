@@ -20,8 +20,8 @@ public:
 	bool initWithStage(const int *stage, int w, int h);
 	void clearGround();
 
-	void drawGround(QMatrix4x4& mvp);
-	void drawGroundWithMesh(QMatrix4x4& mvp);
+	void drawGround(HTAlgorithm::Mat4& mvp);
+	void drawGroundWithMesh(HTAlgorithm::Mat4& mvp);
 
 protected:
 	static const char* const paramModelviewMatrixName;
@@ -31,7 +31,7 @@ protected:
 	GLuint m_groundVBO, m_groundIndexVBO, m_groundMeshIndexVBO;
 	std::vector<QVector3D> m_groundVertices;
 	GLuint m_groundIndexSize, m_meshIndexSize;
-	QOpenGLShaderProgram *m_program, *m_programMesh;
+	WYQOpenGLShaderProgram *m_program, *m_programMesh;
 	GLuint m_vertAttribLocation;
 };
 

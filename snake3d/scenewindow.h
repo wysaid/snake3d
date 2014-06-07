@@ -14,8 +14,8 @@
 #include "htGLFunctions.h"
 #include "stages.h"
 #include "ground.h"
-#include <QTimer>
 
+#include <QTimer>
 #include <vector>
 
 using namespace Snake3D;
@@ -49,16 +49,28 @@ protected:
 	void keyPressEvent(QKeyEvent *);
 	void keyReleaseEvent(QKeyEvent *);
 
-	void initOrtho();
-	void initPerspective();
+	void initOrtho(int w, int h);
+	void initPerspective(int w, int h);
+
+	void updateModelView();
+
+	void goForward(float dis);
+	void goBack(float dis);
+	void goLeft(float dis);
+	void goRight(float dis);
+
 
 private:
-	QOpenGLShaderProgram *m_programDrawNormal, *m_programDrawMesh;
-	QMatrix4x4 m_modelView, m_projection;
-
+	WYQOpenGLShaderProgram *m_programDrawNormal, *m_programDrawMesh;
+	HTAlgorithm::Mat4 m_m4ModelView, m_m4Projection;
+	HTAlgorithm::Vec2f m_v2Direction, m_v2Position;
 
 private:
 	Ground* m_ground;
+	int m_lastX, m_lastY;
+	float m_farAway;
+	bool m_bIsMouseDown;
+
 };
 
 extern SceneWindow* g_sceneWindow;
