@@ -9,6 +9,13 @@
 #ifndef HTPLATFORMS_H_
 #define HTPLATFORMS_H_
 
+#ifndef _HT_GET_MACRO_STRING_HELP
+#define _HT_GET_MACRO_STRING_HELP(x) #x
+#endif
+#ifndef HT_GET_MACRO_STRING
+#define HT_GET_MACRO_STRING(x) _HT_GET_MACRO_STRING_HELP(x)
+#endif
+
 #ifdef QT_OPENGL_ES_2
 #include <QOpenGLFunctions_ES2>
 #else
