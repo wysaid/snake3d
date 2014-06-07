@@ -164,7 +164,7 @@ fflush(stderr);\
 
 #endif
 
-#if !defined(QT_OPENGL_ES_2)
+#if !defined(QT_OPENGL_ES_2) && defined(Q_OS_WIN)
 
 
 namespace snake3D_OpenGLFunctions
