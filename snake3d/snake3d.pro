@@ -27,6 +27,10 @@ HEADERS  += wymainwindow.h \
     htPlatform_QT.h \
     htGLFunctions.h \
     ground.h \
+    htMat.h\
+    htVec.h\
+    htStaticAssert.h\
+    stages.h\
 
 FORMS    += wymainwindow.ui
 
@@ -36,5 +40,5 @@ unix {
 }
 
 win32 {
-    DEFINES += _USE_CXX11_STATIC_ASSERT_=1
+#    DEFINES += _USE_CXX11_STATIC_ASSERT_=1
 }

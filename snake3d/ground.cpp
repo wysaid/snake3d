@@ -227,7 +227,7 @@ bool Ground::initGroundTexture(const char* texName)
 {
 	clearGroundTexture();
 
-	auto&& image = QImage(texName).convertToFormat(QImage::Format_RGBA8888);
+    QImage image = QImage(texName).convertToFormat(QImage::Format_RGBA8888);
 	if(image.width() < 1)
 	{
 		LOG_ERROR("Failed to open file %s!\n", texName);
