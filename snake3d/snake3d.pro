@@ -13,7 +13,7 @@ TEMPLATE = app
 
 #INCLUDEPATH += "."
 
-#DEFINES += LIBHTGPUSDK4QT_LIB=1 DEBUG
+DEFINES += _DEBUG
 
 RESOURCES += wymainwindow.qrc
 
