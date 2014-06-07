@@ -8,6 +8,18 @@
 
 #include "ground.h"
 
+static const char* const s_vshGroundNoTexture = SHADER_STRING
+(
+attribute vec4 vPosition;
+uniform mat4 mvp;
+
+void main()
+{
+
+	gl_Position = mvp * vPosition;
+}
+);
+
 static const char* const s_vshGround = SHADER_STRING
 (
 attribute vec4 vPosition;
@@ -20,7 +32,7 @@ void main()
 }
 );
 
-static const char* const s_fshGround = SHADER_STRING_PRECISION_M
+static const char* const s_fshGroundNoTexture = SHADER_STRING_PRECISION_M
 (
 void main()
 {
@@ -28,6 +40,13 @@ void main()
 }
 );
 
+static const char* const s_fshGround = SHADER_STRING_PRECISION_M
+(
+void main()
+{
+	gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+}
+);
 
 static const char* const s_fshGroundMesh = SHADER_STRING_PRECISION_L
 (
@@ -40,30 +59,8 @@ void main()
 const char* const Ground::paramModelviewMatrixName = "mvp";
 const char* const Ground::paramVertexPositionName = "vPosition";
 
-Ground::Ground() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0), m_groundIndexSize(0), m_meshIndexSize(0)
+Ground::Ground() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0), m_groundIndexSize(0), m_meshIndexSize(0), m_program(NULL), m_programMesh(NULL)
 {
-	m_program = new WYQOpenGLShaderProgram;
-
-	if(!(m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGround) &&
-		m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGround) &&
-		m_program->link()))
-	{
-		LOG_ERROR("Ground : Program link failed!\n");
-	}
-
-	m_programMesh = new WYQOpenGLShaderProgram;
-
-	if(!(m_programMesh->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGround) &&
-		m_programMesh->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGroundMesh) &&
-		m_programMesh->link()))
-	{
-		LOG_ERROR("Ground : Program link failed!\n");
-	}
-
-	m_vertAttribLocation = 0;
-
-	m_program->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
-	m_programMesh->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
 
 }
 
@@ -72,7 +69,7 @@ Ground::~Ground()
 	clearGround();
 }
 
-bool Ground::initWithStage(const int *stage, int w, int h)
+bool Ground::initWithStage(const int *stage, int w, int h, const char* texName)
 {
 	clearGround();
 
@@ -175,7 +172,12 @@ bool Ground::initWithStage(const int *stage, int w, int h)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_groundMeshIndexVBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshIndexes.size() * sizeof(meshIndexes[0]), meshIndexes.data(), GL_STATIC_DRAW);
 
-	return true;
+	if(texName == NULL)
+	{
+		return initProgramsNoTexture();
+	}
+
+	return initGroundTexture(texName) && initPrograms();
 }
 
 void Ground::clearGround()
@@ -219,4 +221,101 @@ void Ground::drawGroundWithMesh(HTAlgorithm::Mat4& mvp)
 
 	glDrawElements(GL_LINES, m_meshIndexSize * 2, GL_UNSIGNED_SHORT, 0);
 	htCheckGLError("drawGroundWithMesh");
+}
+
+bool Ground::initGroundTexture(const char* texName)
+{
+	clearGroundTexture();
+
+	auto&& image = QImage(texName).convertToFormat(QImage::Format_RGBA8888);
+	if(image.width() < 1)
+	{
+		LOG_ERROR("Failed to open file %s!\n", texName);
+		return false;
+	}
+	m_groundTexture = htGenTextureWithBuffer(image.bits(), image.width(), image.height(), GL_RGBA, GL_UNSIGNED_BYTE);
+	return m_groundTexture != 0;
+}
+
+void Ground::clearGroundTexture()
+{
+	glDeleteTextures(1, &m_groundTexture);
+	m_groundTexture = 0;
+}
+
+bool Ground::initPrograms()
+{
+	clearProgram();
+
+	m_program = new WYQOpenGLShaderProgram;
+
+	if(!(m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGround) &&
+		m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGround) &&
+		m_program->link()))
+	{
+		delete m_program;
+		m_program = NULL;
+		LOG_ERROR("Ground : Program link failed!\n");
+		return false;
+	}
+
+	m_programMesh = new WYQOpenGLShaderProgram;
+
+	if(!(m_programMesh->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGroundNoTexture) &&
+		m_programMesh->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGroundMesh) &&
+		m_programMesh->link()))
+	{
+		delete m_programMesh;
+		m_programMesh = NULL;
+		LOG_ERROR("Ground : Program link failed!\n");
+		return false;
+	}
+
+	m_vertAttribLocation = 0;
+
+	m_program->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	m_programMesh->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	return true;
+}
+
+bool Ground::initProgramsNoTexture()
+{
+	clearProgram();
+
+	m_program = new WYQOpenGLShaderProgram;
+
+	if(!(m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGroundNoTexture) &&
+		m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGroundNoTexture) &&
+		m_program->link()))
+	{
+		delete m_program;
+		m_program = NULL;
+		LOG_ERROR("Ground : Program link failed!\n");
+		return false;
+	}
+
+	m_programMesh = new WYQOpenGLShaderProgram;
+
+	if(!(m_programMesh->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGroundNoTexture) &&
+		m_programMesh->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGroundMesh) &&
+		m_programMesh->link()))
+	{
+		delete m_programMesh;
+		m_programMesh = NULL;
+		LOG_ERROR("Ground : Program link failed!\n");
+		return false;
+	}
+
+	m_vertAttribLocation = 0;
+
+	m_program->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	m_programMesh->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	return true;
+}
+
+void Ground::clearProgram()
+{
+	delete m_programMesh;
+	delete m_program;
+	m_programMesh = m_program = NULL;
 }

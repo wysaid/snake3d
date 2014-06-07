@@ -1,4 +1,5 @@
 <RCC>
-    <qresource prefix="WYMainWindow">
+    <qresource prefix="Snake3D">
+      <file>res/ground1.jpg</file>
     </qresource>
 </RCC>

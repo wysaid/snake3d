@@ -41,7 +41,7 @@ void main()
 );
 
 
-SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(1000.0f), m_v2Position(0.0f, 0.0f), m_v2Direction(0.0f, m_farAway)
+SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f)
 {
 	if(g_sceneWindow != NULL)
 	{
@@ -51,6 +51,10 @@ SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNorm
 	setAttribute(Qt::WA_PaintOnScreen);
 	setAttribute(Qt::WA_NoSystemBackground);
 	setAutoBufferSwap(false);
+
+	m_v2Position = HTAlgorithm::Vec2f(0.0f, 0.0f);
+	m_v2Direction = HTAlgorithm::Vec2f(0.0f, m_farAway);
+
 	m_m4Projection.loadIdentity();
 	updateModelView();
 	grabKeyboard();
@@ -136,6 +140,13 @@ void SceneWindow::mouseMoveEvent(QMouseEvent *e)
 
 	m_v2Direction = Mat2::makeRotation((e->x() - m_lastX) / 180.0f) * m_v2Direction;
 
+	m_headUp += (e->y() - m_lastY);// * 100.0f;
+
+	if(m_headUp < -m_farAway / 2.0f)
+		m_headUp = -m_farAway / 2.0f;
+	else if(m_headUp > m_farAway)
+		m_headUp = m_farAway;
+
 	m_lastX = e->x();
 	m_lastY = e->y();
 
@@ -207,7 +218,13 @@ void SceneWindow::initPerspective(int w, int h)
 
 void SceneWindow::updateModelView()
 {
-	m_m4ModelView = HTAlgorithm::Mat4::makeLookAt(m_v2Position[0], m_v2Position[1], 0.1f, m_v2Direction[0], m_v2Direction[1], 0.0f, 0.0f, 0.0f, 1.0f);
+	using namespace HTAlgorithm;
+	const Vec2f v2Dir = m_v2Position + m_v2Direction;
+	const float len = v2Dir.length();
+	const Vec2f v2DirBack = v2Dir * (- m_headUp / len);
+	
+	m_m4ModelView = HTAlgorithm::Mat4::makeLookAt(m_v2Position[0], m_v2Position[1], 0.1f, v2Dir[0], v2Dir[1], m_headUp, v2DirBack[0], v2DirBack[1], len);
+	
 }
 
 void SceneWindow::goForward(float dis)

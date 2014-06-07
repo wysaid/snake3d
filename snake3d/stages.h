@@ -19,7 +19,8 @@
 
 */
 
-enum Directions { dirUP, dirDOWN, dirLEFT, dirRIGHT };
+#ifndef _STAGES_H_
+#define _STAGES_H_
 
 namespace Snake3D
 {
@@ -42,7 +43,9 @@ namespace Snake3D
 
 	const int g_stage1Width = 10;
 	const int g_stage1Height = 10;
+	const char* const g_stage1GroundTextureName = ":/Snake3D/res/ground1.jpg";
 
 
 };
 
+#endif

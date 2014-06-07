@@ -9,14 +9,16 @@
 #ifndef _SCENE_WINDOW_H_
 #define _SCENE_WINDOW_H_
 
-#include "wymainwindow.h"
-
-#include "htGLFunctions.h"
-#include "stages.h"
-#include "ground.h"
-
 #include <QTimer>
 #include <vector>
+#include <QImage>
+
+#include "wymainwindow.h"
+#include "htPlatform_QT.h"
+#include "htGLFunctions.h"
+
+#include "stages.h"
+#include "ground.h"
 
 using namespace Snake3D;
 
@@ -68,7 +70,7 @@ private:
 private:
 	Ground* m_ground;
 	int m_lastX, m_lastY;
-	float m_farAway;
+	float m_farAway, m_headUp;
 	bool m_bIsMouseDown;
 
 };
