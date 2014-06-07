@@ -83,7 +83,7 @@ void SceneWindow::initializeGL()
 {
 	makeCurrent();
 
-#if !defined(QT_OPENGL_ES_2) && defined(Q_OS_WIN)
+#if !defined(QT_OPENGL_ES_2) && !defined(Q_OS_MAC)
     g_glFunctions = context()->functions();
 #endif
 
