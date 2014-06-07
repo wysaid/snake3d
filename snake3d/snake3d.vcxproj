@@ -103,6 +103,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="ground.cpp" />
+    <ClCompile Include="htPlatform_QT.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="scenewindow.cpp" />
     <ClCompile Include="wymainwindow.cpp" />

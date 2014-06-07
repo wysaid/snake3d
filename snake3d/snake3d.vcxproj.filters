@@ -71,6 +71,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_htGLFunctions.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="htPlatform_QT.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="wymainwindow.h">

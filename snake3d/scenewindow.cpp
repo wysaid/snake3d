@@ -10,7 +10,6 @@
 #include "scenewindow.h"
 
 SceneWindow* g_sceneWindow = NULL;
-QGLFunctions* g_glFunctions = NULL;
 
 const char* const s_vshScene = SHADER_STRING
 (
@@ -39,7 +38,6 @@ void main()
 	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 }
 );
-
 
 SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f)
 {
@@ -82,7 +80,10 @@ void SceneWindow::paintGL()
 void SceneWindow::initializeGL()
 {
 	makeCurrent();
-	g_glFunctions = context()->functions();
+
+#if !defined(QT_OPENGL_ES_2)
+    g_glFunctions = context()->functions();
+#endif
 
 	m_programDrawNormal = new WYQOpenGLShaderProgram;
 

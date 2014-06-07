@@ -21,6 +21,7 @@ SOURCES += main.cpp\
     wymainwindow.cpp \
     scenewindow.cpp \
     ground.cpp\
+    htPlatform_QT.cpp
 
 HEADERS  += wymainwindow.h \
     scenewindow.h \

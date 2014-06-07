@@ -76,8 +76,6 @@ private:
 };
 
 extern SceneWindow* g_sceneWindow;
-extern QGLFunctions* g_glFunctions;
-
 
 
 #endif
