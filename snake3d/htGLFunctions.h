@@ -128,21 +128,6 @@ inline Type HT_MID(Type n, Type vMin, Type vMax)
 
 #endif
 
-#include <QOpenGLShaderProgram>
-class WYQOpenGLShaderProgram;
-
-class WYQOpenGLShaderProgram : public QOpenGLShaderProgram
-{
-	Q_OBJECT
-public:
-	explicit WYQOpenGLShaderProgram(QObject *parent = 0) : QOpenGLShaderProgram(parent) {}
-	void setUniformValue(const char* name, const HTAlgorithm::Mat4& mat)
-	{
-		int loc = uniformLocation(name);
-		glUniformMatrix4fv(loc, 1, GL_FALSE, mat[0]);
-	}
-};
-
 inline GLuint htGenTextureWithBuffer(const void* bufferData, GLint w, GLint h, GLenum channelFmt, GLenum dataFmt)
 {
 	GLuint tex;

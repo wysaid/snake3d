@@ -8,27 +8,34 @@
 
 #include "ground.h"
 
+#define GROUND_TEXTURE_ID GL_TEXTURE0
+#define GROUND_TEXTURE_INDEX (GROUND_TEXTURE_ID - GL_TEXTURE0)
+
 static const char* const s_vshGroundNoTexture = SHADER_STRING
 (
-attribute vec4 vPosition;
-uniform mat4 mvp;
+attribute vec4 v4Position;
+uniform mat4 m4MVP;
 
 void main()
 {
 
-	gl_Position = mvp * vPosition;
+	gl_Position = m4MVP * v4Position;
 }
 );
 
 static const char* const s_vshGround = SHADER_STRING
 (
-attribute vec4 vPosition;
-uniform mat4 mvp;
+attribute vec4 v4Position;
+uniform mat4 m4MVP;
+varying vec2 v2TexCoord;
+
+uniform vec2 v2GroundSize;
 
 void main()
 {
 
-	gl_Position = mvp * vPosition;
+	gl_Position = m4MVP * v4Position;
+	v2TexCoord = (v4Position.xy + 1.0) / 2.0;
 }
 );
 
@@ -42,9 +49,11 @@ void main()
 
 static const char* const s_fshGround = SHADER_STRING_PRECISION_M
 (
+uniform sampler2D groundTexture;
+varying vec2 v2TexCoord;
 void main()
 {
-	gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+	gl_FragColor = texture2D(groundTexture, v2TexCoord);//vec4(0.0, 1.0, 1.0, 1.0);
 }
 );
 
@@ -56,10 +65,12 @@ void main()
 }
 );
 
-const char* const Ground::paramModelviewMatrixName = "mvp";
-const char* const Ground::paramVertexPositionName = "vPosition";
+const char* const Ground::paramModelviewMatrixName = "m4MVP";
+const char* const Ground::paramVertexPositionName = "v4Position";
+const char* const Ground::paramGroundTextureName = "groundTexture";
+const char* const Ground::paramGroundSizeName = "v2GroundSize";
 
-Ground::Ground() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0), m_groundIndexSize(0), m_meshIndexSize(0), m_program(NULL), m_programMesh(NULL)
+Ground::Ground() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0), m_groundIndexSize(0), m_meshIndexSize(0), m_program(NULL), m_programMesh(NULL), m_groundTexture(0)
 {
 
 }
@@ -85,7 +96,7 @@ bool Ground::initWithStage(const int *stage, int w, int h, const char* texName)
 
 		for(int j = 0; j <= w; ++j)
 		{
-			const QVector3D v(j * widthStep * 2.0f - 1.0f, heightI * 2.0f - 1.0f, 0.0f);
+			const HTAlgorithm::Vec3f v(j * widthStep * 2.0f - 1.0f, heightI * 2.0f - 1.0f, 0.0f);
 			m_groundVertices[line + j] = v;
 		}
 	}
@@ -196,7 +207,18 @@ void Ground::clearGround()
 void Ground::drawGround(HTAlgorithm::Mat4& mvp)
 {
 	m_program->bind();
-	m_program->setUniformValue(paramModelviewMatrixName, mvp);
+	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
+
+	if(m_groundTexture != 0)
+	{
+		
+		glActiveTexture(GROUND_TEXTURE_ID);
+		glBindTexture(GL_TEXTURE_2D, m_groundTexture);
+		m_program->sendUniformi(paramGroundTextureName, GROUND_TEXTURE_INDEX);
+		
+// 		GLint u = m_program->uniformLocation(paramGroundTextureName);
+// 		glUniform1i(m_program->uniformLocation(paramGroundTextureName), GROUND_TEXTURE_INDEX);
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_groundVBO);
 	glEnableVertexAttribArray(m_vertAttribLocation);
@@ -211,7 +233,7 @@ void Ground::drawGround(HTAlgorithm::Mat4& mvp)
 void Ground::drawGroundWithMesh(HTAlgorithm::Mat4& mvp)
 {
 	m_programMesh->bind();
-	m_programMesh->setUniformValue(paramModelviewMatrixName, mvp);
+	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_groundVBO);
 	glEnableVertexAttribArray(m_vertAttribLocation);
@@ -234,6 +256,8 @@ bool Ground::initGroundTexture(const char* texName)
 		return false;
 	}
 	m_groundTexture = htGenTextureWithBuffer(image.bits(), image.width(), image.height(), GL_RGBA, GL_UNSIGNED_BYTE);
+
+	htCheckGLError("initGroundTexture");
 	return m_groundTexture != 0;
 }
 
@@ -247,10 +271,10 @@ bool Ground::initPrograms()
 {
 	clearProgram();
 
-	m_program = new WYQOpenGLShaderProgram;
+	m_program = new ProgramObject;
 
-	if(!(m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGround) &&
-		m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGround) &&
+	if(!(m_program->initVertexShaderSourceFromString(s_vshGround) &&
+		m_program->initFragmentShaderSourceFromString(s_fshGround) &&
 		m_program->link()))
 	{
 		delete m_program;
@@ -259,10 +283,10 @@ bool Ground::initPrograms()
 		return false;
 	}
 
-	m_programMesh = new WYQOpenGLShaderProgram;
+	m_programMesh = new ProgramObject;
 
-	if(!(m_programMesh->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGroundNoTexture) &&
-		m_programMesh->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGroundMesh) &&
+	if(!(m_programMesh->initVertexShaderSourceFromString(s_vshGroundNoTexture) &&
+		m_programMesh->initFragmentShaderSourceFromString(s_fshGroundMesh) &&
 		m_programMesh->link()))
 	{
 		delete m_programMesh;
@@ -272,20 +296,21 @@ bool Ground::initPrograms()
 	}
 
 	m_vertAttribLocation = 0;
-
 	m_program->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
 	m_programMesh->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	htCheckGLError("Ground::initPrograms");
 	return true;
 }
 
 bool Ground::initProgramsNoTexture()
 {
 	clearProgram();
+	clearGroundTexture();
 
-	m_program = new WYQOpenGLShaderProgram;
+	m_program = new ProgramObject;
 
-	if(!(m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGroundNoTexture) &&
-		m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGroundNoTexture) &&
+	if(!(m_program->initVertexShaderSourceFromString(s_vshGroundNoTexture) &&
+		m_program->initFragmentShaderSourceFromString(s_fshGroundNoTexture) &&
 		m_program->link()))
 	{
 		delete m_program;
@@ -294,10 +319,10 @@ bool Ground::initProgramsNoTexture()
 		return false;
 	}
 
-	m_programMesh = new WYQOpenGLShaderProgram;
+	m_programMesh = new ProgramObject;
 
-	if(!(m_programMesh->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshGroundNoTexture) &&
-		m_programMesh->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshGroundMesh) &&
+	if(!(m_programMesh->initVertexShaderSourceFromString(s_vshGroundNoTexture) &&
+		m_programMesh->initFragmentShaderSourceFromString(s_fshGroundMesh) &&
 		m_programMesh->link()))
 	{
 		delete m_programMesh;
@@ -310,6 +335,7 @@ bool Ground::initProgramsNoTexture()
 
 	m_program->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
 	m_programMesh->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	htCheckGLError("Ground::initProgramsNoTexture");
 	return true;
 }
 

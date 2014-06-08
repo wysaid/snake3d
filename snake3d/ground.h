@@ -26,6 +26,8 @@ public:
 protected:
 	static const char* const paramModelviewMatrixName;
 	static const char* const paramVertexPositionName;
+	static const char* const paramGroundTextureName;
+	static const char* const paramGroundSizeName;
 
 	bool initGroundTexture(const char* texName);
 	void clearGroundTexture();
@@ -35,10 +37,10 @@ protected:
 
 protected:
 	GLuint m_groundVBO, m_groundIndexVBO, m_groundMeshIndexVBO;
-	std::vector<QVector3D> m_groundVertices;
+	std::vector<HTAlgorithm::Vec3f> m_groundVertices;
 	GLuint m_groundIndexSize, m_meshIndexSize;
 	GLuint m_groundTexture;
-	WYQOpenGLShaderProgram *m_program, *m_programMesh;
+	ProgramObject *m_program, *m_programMesh;
 	GLuint m_vertAttribLocation;
 };
 

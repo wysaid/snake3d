@@ -16,6 +16,7 @@
 #include "wymainwindow.h"
 #include "htPlatform_QT.h"
 #include "htGLFunctions.h"
+#include "htShaderFunctions.h"
 
 #include "stages.h"
 #include "ground.h"
@@ -63,7 +64,7 @@ protected:
 
 
 private:
-	WYQOpenGLShaderProgram *m_programDrawNormal, *m_programDrawMesh;
+	ProgramObject *m_programDrawNormal, *m_programDrawMesh;
 	HTAlgorithm::Mat4 m_m4ModelView, m_m4Projection;
 	HTAlgorithm::Vec2f m_v2Direction, m_v2Position;
 

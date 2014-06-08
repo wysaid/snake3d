@@ -56,7 +56,6 @@ SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNorm
 	m_m4Projection.loadIdentity();
 	updateModelView();
 	grabKeyboard();
-    makeCurrent();
 }
 
 SceneWindow::~SceneWindow()
@@ -72,8 +71,9 @@ void SceneWindow::paintGL()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	HTAlgorithm::Mat4 qmat = m_m4Projection * m_m4ModelView;
-
+	
 	m_ground->drawGround(qmat);
+	
 	m_ground->drawGroundWithMesh(qmat);
 
 	swapBuffers();
@@ -87,19 +87,19 @@ void SceneWindow::initializeGL()
     g_glFunctions = context()->functions();
 #endif
 
-	m_programDrawNormal = new WYQOpenGLShaderProgram;
+	m_programDrawNormal = new ProgramObject;
 
-	if(!(m_programDrawNormal->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshScene) &&
-		m_programDrawNormal->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshSceneNormal) &&
+	if(!(m_programDrawNormal->initVertexShaderSourceFromString(s_vshScene) &&
+		m_programDrawNormal->initFragmentShaderSourceFromString(s_fshSceneNormal) &&
 		m_programDrawNormal->link()))
 	{
 		LOG_ERROR("Program link failed!\n");
 	}
 
-	m_programDrawMesh = new WYQOpenGLShaderProgram;
+	m_programDrawMesh = new ProgramObject;
 
-	if(!(m_programDrawMesh->addShaderFromSourceCode(QOpenGLShader::Vertex, s_vshScene) &&
-		m_programDrawMesh->addShaderFromSourceCode(QOpenGLShader::Fragment, s_fshSceneMesh) &&
+	if(!(m_programDrawMesh->initVertexShaderSourceFromString(s_vshScene) &&
+		m_programDrawMesh->initFragmentShaderSourceFromString(s_fshSceneMesh) &&
 		m_programDrawMesh->link()))
 	{
 		LOG_ERROR("Program link failed!\n");
@@ -108,10 +108,18 @@ void SceneWindow::initializeGL()
 	glClearColor(0.2f, 0.2f, 0.1f, 1.0f);
 
 	m_ground = new Ground;
-	m_ground->initWithStage(g_stage1, g_stage1Width, g_stage1Height);
+	if(!m_ground->initWithStage(g_stage1, g_stage1Width, g_stage1Height, g_stage1GroundTextureName))
+	{
+		LOG_ERROR("Init Stage Failed!");
+	}
+
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), SLOT(updateGL()));
 	timer->start(20);
+
+	glEnable(GL_DEPTH_TEST);
+
+	htCheckGLError("SceneWindow::initializeGL");
 }
 
 void SceneWindow::resizeGL(int w, int h)
