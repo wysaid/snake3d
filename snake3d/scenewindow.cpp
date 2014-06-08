@@ -75,7 +75,7 @@ void SceneWindow::paintGL()
 	
 	m_ground->drawGround(qmat);
 	
-	m_ground->drawGroundWithMesh(qmat);
+//	m_ground->drawGroundWithMesh(qmat);
 
 	swapBuffers();
 }
@@ -119,7 +119,7 @@ void SceneWindow::initializeGL()
 	timer->start(20);
 
 	glEnable(GL_DEPTH_TEST);
-
+	
 	htCheckGLError("SceneWindow::initializeGL");
 }
 

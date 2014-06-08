@@ -38,6 +38,7 @@ protected:
 protected:
 	GLuint m_groundVBO, m_groundIndexVBO, m_groundMeshIndexVBO;
 	std::vector<HTAlgorithm::Vec3f> m_groundVertices;
+	HTAlgorithm::Vec2f m_groundSize;
 	GLuint m_groundIndexSize, m_meshIndexSize;
 	GLuint m_groundTexture;
 	ProgramObject *m_program, *m_programMesh;

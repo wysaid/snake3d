@@ -71,6 +71,9 @@
     <ClCompile Include="htShaderFunctions.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="sky.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="wymainwindow.h">
@@ -113,6 +116,9 @@
     </ClInclude>
     <ClInclude Include="htShaderFunctions.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="sky.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

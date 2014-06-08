@@ -101,6 +101,7 @@
     <ClCompile Include="htShaderFunctions.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="scenewindow.cpp" />
+    <ClCompile Include="sky.cpp" />
     <ClCompile Include="wymainwindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="htShaderFunctions.h" />
     <ClInclude Include="htStaticAssert.h" />
     <ClInclude Include="htVec.h" />
+    <ClInclude Include="sky.h" />
     <ClInclude Include="stages.h" />
   </ItemGroup>
   <ItemGroup>

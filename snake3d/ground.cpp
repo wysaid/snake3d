@@ -29,8 +29,6 @@ attribute vec4 v4Position;
 uniform mat4 m4MVP;
 varying vec2 v2TexCoord;
 
-uniform vec2 v2GroundSize;
-
 void main()
 {
 
@@ -51,9 +49,11 @@ static const char* const s_fshGround = SHADER_STRING_PRECISION_M
 (
 uniform sampler2D groundTexture;
 varying vec2 v2TexCoord;
+uniform vec2 v2GroundSize;
+
 void main()
 {
-	gl_FragColor = texture2D(groundTexture, v2TexCoord);//vec4(0.0, 1.0, 1.0, 1.0);
+	gl_FragColor = texture2D(groundTexture, fract(v2TexCoord * v2GroundSize));//vec4(0.0, 1.0, 1.0, 1.0);
 }
 );
 
@@ -70,7 +70,7 @@ const char* const Ground::paramVertexPositionName = "v4Position";
 const char* const Ground::paramGroundTextureName = "groundTexture";
 const char* const Ground::paramGroundSizeName = "v2GroundSize";
 
-Ground::Ground() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0), m_groundIndexSize(0), m_meshIndexSize(0), m_program(NULL), m_programMesh(NULL), m_groundTexture(0)
+Ground::Ground() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0), m_groundIndexSize(0), m_meshIndexSize(0), m_program(NULL), m_programMesh(NULL), m_groundTexture(0), m_groundSize()
 {
 
 }
@@ -82,6 +82,9 @@ Ground::~Ground()
 
 bool Ground::initWithStage(const int *stage, int w, int h, const char* texName)
 {
+	m_groundSize[0] = w;
+	m_groundSize[1] = h;
+
 	clearGround();
 
 	float widthStep = 1.0f / w;
@@ -215,9 +218,6 @@ void Ground::drawGround(HTAlgorithm::Mat4& mvp)
 		glActiveTexture(GROUND_TEXTURE_ID);
 		glBindTexture(GL_TEXTURE_2D, m_groundTexture);
 		m_program->sendUniformi(paramGroundTextureName, GROUND_TEXTURE_INDEX);
-		
-// 		GLint u = m_program->uniformLocation(paramGroundTextureName);
-// 		glUniform1i(m_program->uniformLocation(paramGroundTextureName), GROUND_TEXTURE_INDEX);
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_groundVBO);
@@ -282,6 +282,9 @@ bool Ground::initPrograms()
 		LOG_ERROR("Ground : Program link failed!\n");
 		return false;
 	}
+
+	m_program->bind();
+	m_program->sendUniformf(paramGroundSizeName, m_groundSize[0], m_groundSize[1]);
 
 	m_programMesh = new ProgramObject;
 
