@@ -56,6 +56,7 @@ SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNorm
 	m_m4Projection.loadIdentity();
 	updateModelView();
 	grabKeyboard();
+    makeCurrent();
 }
 
 SceneWindow::~SceneWindow()
