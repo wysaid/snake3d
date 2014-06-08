@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     wymainwindow.cpp \
     scenewindow.cpp \
     ground.cpp\
-    htPlatform_QT.cpp
+    htPlatform_QT.cpp \
+    htShaderFunctions.cpp \
 
 HEADERS  += wymainwindow.h \
     scenewindow.h \
@@ -32,6 +33,7 @@ HEADERS  += wymainwindow.h \
     htVec.h\
     htStaticAssert.h\
     stages.h\
+    htShaderFunctions.h
 
 FORMS    += wymainwindow.ui
 
