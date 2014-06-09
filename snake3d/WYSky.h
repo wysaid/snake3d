@@ -18,10 +18,29 @@ public:
 	WYSky();
 	~WYSky();
 
-protected:
+	bool initSky(const char* texName = NULL);
+
+	void drawSky(const HTAlgorithm::Mat4& mvp);
+	void drawSkyWithMesh(const HTAlgorithm::Mat4& mvp);
 
 protected:
-	GLuint
+	static const char* const paramModelviewMatrixName;
+	static const char* const paramVertexPositionName;
+	static const char* const paramSkyTextureName;
+
+	bool initSkyTexture(const char* texName);
+	void clearSkyTexture();
+	void clearSkyBuffers();
+	bool initPrograms();
+	bool initProgramsMesh();
+	void clearProgram();
+
+protected:
+	GLuint m_skyVBO, m_skyIndexVBO;
+	GLuint m_skyTexture;
+	ProgramObject *m_program, *m_programMesh;
+	GLuint m_vertAttribLocation;
+	GLuint m_vertexIndexSize;
 };
 
 

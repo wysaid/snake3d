@@ -208,19 +208,19 @@ void ProgramObject::sendUniformi(const char* name, GLint x, GLint y, GLint z, GL
 	glUniform4i(uniform, x, y, z, w);
 }
 
-void ProgramObject::sendUniformMat2x2(const char* name, int count, GLboolean transpose, GLfloat* matrix)
+void ProgramObject::sendUniformMat2x2(const char* name, int count, GLboolean transpose, const GLfloat* matrix)
 {
 	GETUNIFORM(uniform, m_programID, name);
 	glUniformMatrix2fv(uniform, count, transpose, matrix);
 }
 
-void ProgramObject::sendUniformMat3x3(const char* name, GLsizei count, GLboolean transpose, GLfloat* matrix)
+void ProgramObject::sendUniformMat3x3(const char* name, GLsizei count, GLboolean transpose, const GLfloat* matrix)
 {
 	GETUNIFORM(uniform, m_programID, name);
 	glUniformMatrix3fv(uniform, count, transpose, matrix);
 }
 
-void ProgramObject::sendUniformMat4x4(const char* name, GLsizei count, GLboolean transpose, GLfloat* matrix)
+void ProgramObject::sendUniformMat4x4(const char* name, GLsizei count, GLboolean transpose, const GLfloat* matrix)
 {
 	GETUNIFORM(uniform, m_programID, name);
 	glUniformMatrix4fv(uniform, count, transpose, matrix);

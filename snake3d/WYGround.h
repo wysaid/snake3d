@@ -20,8 +20,8 @@ public:
 	bool initWithStage(const int *stage, int w, int h, const char* texName = NULL);
 	void clearGround();
 
-	void drawGround(HTAlgorithm::Mat4& mvp);
-	void drawGroundWithMesh(HTAlgorithm::Mat4& mvp);
+	void drawGround(const HTAlgorithm::Mat4& mvp);
+	void drawGroundWithMesh(const HTAlgorithm::Mat4& mvp);
 
 protected:
 	static const char* const paramModelviewMatrixName;

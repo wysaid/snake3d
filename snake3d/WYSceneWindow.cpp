@@ -39,7 +39,7 @@ void main()
 }
 );
 
-WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f)
+WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f), m_fovyRad(M_PI / 3.0f)
 {
 	if(g_sceneWindow != NULL)
 	{
@@ -202,6 +202,16 @@ void WYSceneWindow::keyReleaseEvent(QKeyEvent *)
 
 }
 
+void WYSceneWindow::wheelEvent(QWheelEvent *e)
+{
+	m_fovyRad += e->delta() / 2400.0f;
+	if(m_fovyRad < M_PI / 10.0f) 
+		m_fovyRad = M_PI / 10.0f;
+	else if(m_fovyRad > M_PI / 3.0)
+		m_fovyRad = M_PI / 3.0f;
+	initPerspective(width(), height());
+}
+
 GLuint WYSceneWindow::genTextureWithBuffer(const void* bufferData, GLint w, GLint h, GLenum channelFmt, GLenum dataFmt)
 {
 	GLuint tex;
@@ -225,7 +235,7 @@ void WYSceneWindow::initPerspective(int w, int h)
 {	
 	float aspectRatio = w / float(h);
 	float z = HT_MIN(width(), height());
-	m_m4Projection = HTAlgorithm::Mat4::makePerspective(M_PI / 3.0f, aspectRatio, .1f, 10000.0f);
+	m_m4Projection = HTAlgorithm::Mat4::makePerspective(m_fovyRad, aspectRatio, .1f, 10000.0f);
 }
 
 void WYSceneWindow::updateModelView()

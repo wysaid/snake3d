@@ -42,7 +42,7 @@ static const char* const s_fshGroundNoTexture = SHADER_STRING_PRECISION_M
 (
 void main()
 {
-	gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+	gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
 }
 );
 
@@ -89,20 +89,20 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 
 	clearGround();
 
-	float widthStep = 1.0f / w;
-	float heightStep = 1.0f / h;
+	const float widthStep = 1.0f / w;
+	const float heightStep = 1.0f / h;
 
 	m_groundVertices.resize((w + 1) * (h + 1));
-
+	int index = 0;
 	for(int i = 0; i <= h; ++i)
 	{
-		float line = (w + 1) * i;
-		float heightI = i * widthStep;
+//		const float line = (w + 1) * i;
+		const float heightI = i * widthStep;
 
 		for(int j = 0; j <= w; ++j)
 		{
 			const HTAlgorithm::Vec3f v(j * widthStep * 2.0f - 1.0f, heightI * 2.0f - 1.0f, 0.0f);
-			m_groundVertices[line + j] = v;
+			m_groundVertices[index++] = v;
 		}
 	}
 
@@ -110,7 +110,7 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 	glBindBuffer(GL_ARRAY_BUFFER, m_groundVBO);
 	glBufferData(GL_ARRAY_BUFFER, m_groundVertices.size() * sizeof(m_groundVertices[0]), m_groundVertices.data(), GL_DYNAMIC_DRAW);
 
-	int index = 0;
+	index = 0;
 	std::vector<unsigned short> meshIndexes;
 	m_groundIndexSize = w * h * 2;
 	meshIndexes.resize(m_groundIndexSize * 3);
@@ -188,12 +188,14 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_groundMeshIndexVBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshIndexes.size() * sizeof(meshIndexes[0]), meshIndexes.data(), GL_STATIC_DRAW);
 
-	if(texName == NULL)
+	htCheckGLError("WYGround::initWithStage");
+
+	if(texName == NULL || !initGroundTexture(texName))
 	{
 		return initProgramsNoTexture();
 	}
 
-	return initGroundTexture(texName) && initPrograms();
+	return  initPrograms();
 }
 
 void WYGround::clearGround()
@@ -209,7 +211,7 @@ void WYGround::clearGround()
 
 }
 
-void WYGround::drawGround(HTAlgorithm::Mat4& mvp)
+void WYGround::drawGround(const HTAlgorithm::Mat4& mvp)
 {
 	m_program->bind();
 	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
@@ -232,7 +234,7 @@ void WYGround::drawGround(HTAlgorithm::Mat4& mvp)
 	htCheckGLError("drawGround");
 }
 
-void WYGround::drawGroundWithMesh(HTAlgorithm::Mat4& mvp)
+void WYGround::drawGroundWithMesh(const HTAlgorithm::Mat4& mvp)
 {
 	m_programMesh->bind();
 	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);

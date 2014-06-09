@@ -47,9 +47,9 @@ public:
 	void sendUniformi(const char* name, GLint, GLint, GLint);
 	void sendUniformi(const char* name, GLint, GLint, GLint, GLint);
 
-	void sendUniformMat2x2(const char* name, GLsizei count, GLboolean transpose, GLfloat* matrix);
-	void sendUniformMat3x3(const char* name, GLsizei count, GLboolean transpose, GLfloat* matrix);
-	void sendUniformMat4x4(const char* name, GLsizei count, GLboolean transpose, GLfloat* matrix);
+	void sendUniformMat2x2(const char* name, GLsizei count, GLboolean transpose, const GLfloat* matrix);
+	void sendUniformMat3x3(const char* name, GLsizei count, GLboolean transpose, const GLfloat* matrix);
+	void sendUniformMat4x4(const char* name, GLsizei count, GLboolean transpose, const GLfloat* matrix);
 
 	inline GLuint programId() { return m_programID; }
 	inline GLint attributeLocation(const char* name) { return glGetAttribLocation(m_programID, name); }

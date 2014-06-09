@@ -52,6 +52,8 @@ protected:
 	void keyPressEvent(QKeyEvent *);
 	void keyReleaseEvent(QKeyEvent *);
 
+	void wheelEvent(QWheelEvent *);
+
 	void initOrtho(int w, int h);
 	void initPerspective(int w, int h);
 
@@ -72,6 +74,7 @@ private:
 	WYGround* m_ground;
 	int m_lastX, m_lastY;
 	float m_farAway, m_headUp;
+	float m_fovyRad;
 	bool m_bIsMouseDown;
 
 };
