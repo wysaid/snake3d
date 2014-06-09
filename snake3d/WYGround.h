@@ -1,5 +1,5 @@
 ﻿/*
- * ground.h
+ * WYGround.h
  *
  *  Created on: 2014-6-6
  *      Author: Wang Yang
@@ -9,13 +9,13 @@
 #ifndef _GROUND_H_
 #define _GROUND_H_
 
-#include "scenewindow.h"
+#include "htShaderFunctions.h"
 
-class Ground
+class WYGround
 {
 public:
-	Ground();
-	~Ground();
+	WYGround();
+	~WYGround();
 
 	bool initWithStage(const int *stage, int w, int h, const char* texName = NULL);
 	void clearGround();

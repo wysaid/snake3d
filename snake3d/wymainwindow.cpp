@@ -15,7 +15,7 @@ WYMainWindow::WYMainWindow(QWidget *parent)
 {
 	g_mainwindow = this;
 	ui.setupUi(this);
-	m_scene = new SceneWindow(ui.centralWidget);
+	m_scene = new WYSceneWindow(ui.centralWidget);
 }
 
 WYMainWindow::~WYMainWindow()

@@ -1,5 +1,5 @@
 ﻿/*
- * scenewindow.h
+ * WYSceneWindow.h
  *
  *  Created on: 2014-6-5
  *      Author: Wang Yang
@@ -18,8 +18,8 @@
 #include "htGLFunctions.h"
 #include "htShaderFunctions.h"
 
-#include "stages.h"
-#include "ground.h"
+#include "WYStages.h"
+#include "WYGround.h"
 
 using namespace Snake3D;
 
@@ -27,14 +27,14 @@ class WYMainWindow;
 
 class QGLWidget;
 class QGLFunctions;
-class Ground;
+class WYGround;
 
-class SceneWindow : public QGLWidget
+class WYSceneWindow : public QGLWidget
 {
 	Q_OBJECT
 public:
-	SceneWindow(QWidget* parent = NULL);
-	~SceneWindow();
+	WYSceneWindow(QWidget* parent = NULL);
+	~WYSceneWindow();
 
 	static GLuint genTextureWithBuffer(const void* bufferData, GLint w, GLint h, GLenum channelFmt, GLenum dataFmt);
 
@@ -69,14 +69,14 @@ private:
 	HTAlgorithm::Vec2f m_v2Direction, m_v2Position;
 
 private:
-	Ground* m_ground;
+	WYGround* m_ground;
 	int m_lastX, m_lastY;
 	float m_farAway, m_headUp;
 	bool m_bIsMouseDown;
 
 };
 
-extern SceneWindow* g_sceneWindow;
+extern WYSceneWindow* g_sceneWindow;
 
 
 #endif

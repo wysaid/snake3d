@@ -18,9 +18,9 @@
 
 
 #include "ui_wymainwindow.h"
-#include "scenewindow.h"
+#include "WYSceneWindow.h"
 
-class SceneWindow;
+class WYSceneWindow;
 
 class WYMainWindow : public QMainWindow
 {
@@ -36,7 +36,7 @@ protected:
 private:
 	Ui::WYMainWindowClass ui;
 
-	SceneWindow* m_scene;
+	WYSceneWindow* m_scene;
 };
 
 extern WYMainWindow* g_mainwindow;

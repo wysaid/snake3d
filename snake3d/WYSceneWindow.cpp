@@ -1,5 +1,5 @@
 ﻿/*
- * scenewindow.cpp
+ * WYSceneWindow.cpp
  *
  *  Created on: 2014-6-5
  *      Author: Wang Yang
@@ -7,9 +7,9 @@
 */
 
 
-#include "scenewindow.h"
+#include "WYSceneWindow.h"
 
-SceneWindow* g_sceneWindow = NULL;
+WYSceneWindow* g_sceneWindow = NULL;
 
 const char* const s_vshScene = SHADER_STRING
 (
@@ -39,7 +39,7 @@ void main()
 }
 );
 
-SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f)
+WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f)
 {
 	if(g_sceneWindow != NULL)
 	{
@@ -59,7 +59,7 @@ SceneWindow::SceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNorm
     makeCurrent();
 }
 
-SceneWindow::~SceneWindow()
+WYSceneWindow::~WYSceneWindow()
 {
     makeCurrent();
 	delete m_programDrawNormal;
@@ -67,7 +67,7 @@ SceneWindow::~SceneWindow()
 	delete m_ground;
 }
 
-void SceneWindow::paintGL()
+void WYSceneWindow::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -80,7 +80,7 @@ void SceneWindow::paintGL()
 	swapBuffers();
 }
 
-void SceneWindow::initializeGL()
+void WYSceneWindow::initializeGL()
 {
 	makeCurrent();
 
@@ -108,7 +108,7 @@ void SceneWindow::initializeGL()
 
 	glClearColor(0.2f, 0.2f, 0.1f, 1.0f);
 
-	m_ground = new Ground;
+	m_ground = new WYGround;
 	if(!m_ground->initWithStage(g_stage1, g_stage1Width, g_stage1Height, g_stage1GroundTextureName))
 	{
 		LOG_ERROR("Init Stage Failed!");
@@ -123,25 +123,25 @@ void SceneWindow::initializeGL()
 	htCheckGLError("SceneWindow::initializeGL");
 }
 
-void SceneWindow::resizeGL(int w, int h)
+void WYSceneWindow::resizeGL(int w, int h)
 {
 	glViewport(0, 0, w, h);
 	initPerspective(w, h);
 }
 
-void SceneWindow::mousePressEvent(QMouseEvent *e)
+void WYSceneWindow::mousePressEvent(QMouseEvent *e)
 {
 	m_bIsMouseDown = true;
 	m_lastX = e->x();
 	m_lastY = e->y();
 }
 
-void SceneWindow::mouseDoubleClickEvent(QMouseEvent *e)
+void WYSceneWindow::mouseDoubleClickEvent(QMouseEvent *e)
 {
 
 }
 
-void SceneWindow::mouseMoveEvent(QMouseEvent *e)
+void WYSceneWindow::mouseMoveEvent(QMouseEvent *e)
 {
 	if(!m_bIsMouseDown)
 		return;
@@ -165,16 +165,16 @@ void SceneWindow::mouseMoveEvent(QMouseEvent *e)
 	updateModelView();
 }
 
-void SceneWindow::mouseReleaseEvent(QMouseEvent *e)
+void WYSceneWindow::mouseReleaseEvent(QMouseEvent *e)
 {
 
 }
 
-void SceneWindow::keyPressEvent(QKeyEvent *e)
+void WYSceneWindow::keyPressEvent(QKeyEvent *e)
 {
 	using namespace HTAlgorithm;
 
-	float motion = 0.1f;
+	float motion = 0.02f;
 
 	switch (e->key())
 	{
@@ -197,12 +197,12 @@ void SceneWindow::keyPressEvent(QKeyEvent *e)
 	updateModelView();
 }
 
-void SceneWindow::keyReleaseEvent(QKeyEvent *)
+void WYSceneWindow::keyReleaseEvent(QKeyEvent *)
 {
 
 }
 
-GLuint SceneWindow::genTextureWithBuffer(const void* bufferData, GLint w, GLint h, GLenum channelFmt, GLenum dataFmt)
+GLuint WYSceneWindow::genTextureWithBuffer(const void* bufferData, GLint w, GLint h, GLenum channelFmt, GLenum dataFmt)
 {
 	GLuint tex;
     glActiveTexture(GL_TEXTURE0);
@@ -216,19 +216,19 @@ GLuint SceneWindow::genTextureWithBuffer(const void* bufferData, GLint w, GLint 
 	return tex;
 }
 
-void SceneWindow::initOrtho(int w, int h)
+void WYSceneWindow::initOrtho(int w, int h)
 {
 	m_m4Projection = HTAlgorithm::Mat4::makeOrtho(-1.0, 1.0, -1.0, 1.0, 1.0, -1.0);
 }
 
-void SceneWindow::initPerspective(int w, int h)
+void WYSceneWindow::initPerspective(int w, int h)
 {	
 	float aspectRatio = w / float(h);
 	float z = HT_MIN(width(), height());
 	m_m4Projection = HTAlgorithm::Mat4::makePerspective(M_PI / 3.0f, aspectRatio, .1f, 10000.0f);
 }
 
-void SceneWindow::updateModelView()
+void WYSceneWindow::updateModelView()
 {
 	using namespace HTAlgorithm;
 	const Vec2f v2Dir = m_v2Position + m_v2Direction;
@@ -239,26 +239,26 @@ void SceneWindow::updateModelView()
 	
 }
 
-void SceneWindow::goForward(float dis)
+void WYSceneWindow::goForward(float dis)
 {
 	HTAlgorithm::Vec2f tmp(m_v2Direction);
 	m_v2Position += tmp.normalize() * dis;
 }
 
-void SceneWindow::goBack(float dis)
+void WYSceneWindow::goBack(float dis)
 {
 	HTAlgorithm::Vec2f tmp(m_v2Direction);
 	m_v2Position -= tmp.normalize() * dis;
 }
 
-void SceneWindow::goLeft(float dis)
+void WYSceneWindow::goLeft(float dis)
 {
 	HTAlgorithm::Vec2f tmp(m_v2Direction);
 	tmp.normalize();
 	m_v2Position += HTAlgorithm::Vec2f(-tmp[1], tmp[0]) * dis;
 }
 
-void SceneWindow::goRight(float dis)
+void WYSceneWindow::goRight(float dis)
 {
 	HTAlgorithm::Vec2f tmp(m_v2Direction);
 	tmp.normalize();

@@ -19,20 +19,20 @@ RESOURCES += wymainwindow.qrc
 
 SOURCES += main.cpp\
     wymainwindow.cpp \
-    scenewindow.cpp \
-    ground.cpp\
+    WYScenewindow.cpp \
+    WYGround.cpp\
     htPlatform_QT.cpp \
     htShaderFunctions.cpp \
 
 HEADERS  += wymainwindow.h \
-    scenewindow.h \
+    WYScenewindow.h \
     htPlatform_QT.h \
     htGLFunctions.h \
-    ground.h \
+    WYGround.h \
     htMat.h\
     htVec.h\
     htStaticAssert.h\
-    stages.h\
+    WYStages.h\
     htShaderFunctions.h
 
 FORMS    += wymainwindow.ui

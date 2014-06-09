@@ -47,22 +47,10 @@
     <ClCompile Include="GeneratedFiles\qrc_wymainwindow.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="scenewindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ground.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_wymainwindow.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_wymainwindow.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_scenewindow.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_scenewindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="htPlatform_QT.cpp">
@@ -71,7 +59,19 @@
     <ClCompile Include="htShaderFunctions.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="sky.cpp">
+    <ClCompile Include="WYSceneWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_WYSceneWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_WYSceneWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="WYGround.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WYSky.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -85,11 +85,11 @@
     <CustomBuild Include="wymainwindow.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="scenewindow.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="htGLFunctions.h">
       <Filter>Utility</Filter>
+    </CustomBuild>
+    <CustomBuild Include="WYSceneWindow.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -98,12 +98,6 @@
     </ClInclude>
     <ClInclude Include="htPlatform_QT.h">
       <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="stages.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ground.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="htMat.h">
       <Filter>Utility</Filter>
@@ -117,7 +111,13 @@
     <ClInclude Include="htShaderFunctions.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="sky.h">
+    <ClInclude Include="WYGround.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WYSky.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WYStages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

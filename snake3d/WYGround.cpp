@@ -1,12 +1,12 @@
 ﻿/*
- * ground.cpp
+ * WYGround.cpp
  *
  *  Created on: 2014-6-6
  *      Author: Wang Yang
  *        Mail: admin@wysaid.org
 */
 
-#include "ground.h"
+#include "WYGround.h"
 
 #define GROUND_TEXTURE_ID GL_TEXTURE0
 #define GROUND_TEXTURE_INDEX (GROUND_TEXTURE_ID - GL_TEXTURE0)
@@ -28,12 +28,13 @@ static const char* const s_vshGround = SHADER_STRING
 attribute vec4 v4Position;
 uniform mat4 m4MVP;
 varying vec2 v2TexCoord;
+uniform vec2 v2GroundSize;
 
 void main()
 {
 
 	gl_Position = m4MVP * v4Position;
-	v2TexCoord = (v4Position.xy + 1.0) / 2.0;
+	v2TexCoord = (v4Position.xy + 1.0) / 2.0 * v2GroundSize;
 }
 );
 
@@ -49,11 +50,12 @@ static const char* const s_fshGround = SHADER_STRING_PRECISION_M
 (
 uniform sampler2D groundTexture;
 varying vec2 v2TexCoord;
-uniform vec2 v2GroundSize;
+
 
 void main()
 {
-	gl_FragColor = texture2D(groundTexture, fract(v2TexCoord * v2GroundSize));//vec4(0.0, 1.0, 1.0, 1.0);
+	//gl_FragColor = texture2D(groundTexture, fract(v2TexCoord));
+	gl_FragColor = texture2D(groundTexture, v2TexCoord);
 }
 );
 
@@ -65,22 +67,22 @@ void main()
 }
 );
 
-const char* const Ground::paramModelviewMatrixName = "m4MVP";
-const char* const Ground::paramVertexPositionName = "v4Position";
-const char* const Ground::paramGroundTextureName = "groundTexture";
-const char* const Ground::paramGroundSizeName = "v2GroundSize";
+const char* const WYGround::paramModelviewMatrixName = "m4MVP";
+const char* const WYGround::paramVertexPositionName = "v4Position";
+const char* const WYGround::paramGroundTextureName = "groundTexture";
+const char* const WYGround::paramGroundSizeName = "v2GroundSize";
 
-Ground::Ground() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0), m_groundIndexSize(0), m_meshIndexSize(0), m_program(NULL), m_programMesh(NULL), m_groundTexture(0), m_groundSize()
+WYGround::WYGround() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0), m_groundIndexSize(0), m_meshIndexSize(0), m_program(NULL), m_programMesh(NULL), m_groundTexture(0), m_groundSize()
 {
 
 }
 
-Ground::~Ground()
+WYGround::~WYGround()
 {
 	clearGround();
 }
 
-bool Ground::initWithStage(const int *stage, int w, int h, const char* texName)
+bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName)
 {
 	m_groundSize[0] = w;
 	m_groundSize[1] = h;
@@ -194,7 +196,7 @@ bool Ground::initWithStage(const int *stage, int w, int h, const char* texName)
 	return initGroundTexture(texName) && initPrograms();
 }
 
-void Ground::clearGround()
+void WYGround::clearGround()
 {
 	glDeleteBuffers(1, &m_groundVBO);
 	m_groundVBO = 0;
@@ -207,7 +209,7 @@ void Ground::clearGround()
 
 }
 
-void Ground::drawGround(HTAlgorithm::Mat4& mvp)
+void WYGround::drawGround(HTAlgorithm::Mat4& mvp)
 {
 	m_program->bind();
 	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
@@ -230,7 +232,7 @@ void Ground::drawGround(HTAlgorithm::Mat4& mvp)
 	htCheckGLError("drawGround");
 }
 
-void Ground::drawGroundWithMesh(HTAlgorithm::Mat4& mvp)
+void WYGround::drawGroundWithMesh(HTAlgorithm::Mat4& mvp)
 {
 	m_programMesh->bind();
 	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
@@ -245,7 +247,7 @@ void Ground::drawGroundWithMesh(HTAlgorithm::Mat4& mvp)
 	htCheckGLError("drawGroundWithMesh");
 }
 
-bool Ground::initGroundTexture(const char* texName)
+bool WYGround::initGroundTexture(const char* texName)
 {
 	clearGroundTexture();
 
@@ -261,13 +263,13 @@ bool Ground::initGroundTexture(const char* texName)
 	return m_groundTexture != 0;
 }
 
-void Ground::clearGroundTexture()
+void WYGround::clearGroundTexture()
 {
 	glDeleteTextures(1, &m_groundTexture);
 	m_groundTexture = 0;
 }
 
-bool Ground::initPrograms()
+bool WYGround::initPrograms()
 {
 	clearProgram();
 
@@ -305,7 +307,7 @@ bool Ground::initPrograms()
 	return true;
 }
 
-bool Ground::initProgramsNoTexture()
+bool WYGround::initProgramsNoTexture()
 {
 	clearProgram();
 	clearGroundTexture();
@@ -342,7 +344,7 @@ bool Ground::initProgramsNoTexture()
 	return true;
 }
 
-void Ground::clearProgram()
+void WYGround::clearProgram()
 {
 	delete m_programMesh;
 	delete m_program;

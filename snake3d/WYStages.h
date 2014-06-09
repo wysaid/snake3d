@@ -1,5 +1,5 @@
 ﻿/*
- * stages.h
+ * WYStages.h
  *
  *  Created on: 2014-6-4
  *      Author: Wang Yang
@@ -24,6 +24,8 @@
 
 namespace Snake3D
 {
+	const char* const g_skyTextureName = ":/Snake3D/res/sky.jpg";
+
 	const int g_stage1[] = 
 	{
 		0,0,0, 0,0,0, 0,0,0, 0,
