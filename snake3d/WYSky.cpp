@@ -9,7 +9,7 @@
 
 #include "WYSky.h"
 
-#define SKY_TEXTURE_ID GL_TEXTURE1
+#define SKY_TEXTURE_ID GL_TEXTURE2
 #define SKY_TEXTURE_INDEX (SKY_TEXTURE_ID - GL_TEXTURE0)
 
 #define SKY_RADIUS 1.0f
@@ -49,7 +49,7 @@ static const char* const s_fshSkyNoTexture = SHADER_STRING_PRECISION_M
 varying vec3 v3Color;
 void main()
 {
-	gl_FragColor = vec4(v3Color, 1.0);
+	gl_FragColor = vec4(1.0, v3Color.xy, 1.0);
 }
 );
 
@@ -109,8 +109,8 @@ bool WYSky::initSky(const char* texName)
 
 	index = 0;
 	std::vector<unsigned short> meshIndexes;
-	m_vertexIndexSize = SKY_RADIUS_VERTEX_SIZE * SKY_PERIMETER_VERTEX_SIZE * 2;
-	meshIndexes.resize(m_vertexIndexSize * 3);
+	m_vertexIndexSize = SKY_RADIUS_VERTEX_SIZE * SKY_PERIMETER_VERTEX_SIZE * 6;
+	meshIndexes.resize(m_vertexIndexSize);
 
 	for(int i = 0; i < SKY_RADIUS_VERTEX_SIZE - 1; ++i)
 	{
@@ -143,23 +143,68 @@ bool WYSky::initSky(const char* texName)
 		index += 6;
 	}
 
-	return true;
+	glGenBuffers(1, &m_skyIndexVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_skyIndexVBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshIndexes.size() * sizeof(meshIndexes[0]), meshIndexes.data(), GL_STATIC_DRAW);
+
+	htCheckGLError("WYSky::initSky");
+
+	return initPrograms() && initSkyTexture(texName);
 }
 
 void WYSky::drawSky(const HTAlgorithm::Mat4& mvp)
 {
+	if(m_program == NULL || m_skyTexture == 0)
+		return drawSkyWithMesh(mvp);
+
+	m_program->bind();
+	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
+
+	glActiveTexture(SKY_TEXTURE_ID);
+	glBindTexture(GL_TEXTURE_2D, m_skyTexture);
+	m_program->sendUniformi(paramSkyTextureName, SKY_TEXTURE_INDEX);
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_skyVBO);
+	glEnableVertexAttribArray(m_vertAttribLocation);
+	glVertexAttribPointer(m_vertAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_skyIndexVBO);
+
+	glDrawElements(GL_TRIANGLES, m_vertexIndexSize, GL_UNSIGNED_SHORT, 0);
+	htCheckGLError("drawGround");
 
 }
 
 void WYSky::drawSkyWithMesh(const HTAlgorithm::Mat4& mvp)
 {
+	m_programMesh->bind();
+	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
 
+	glBindBuffer(GL_ARRAY_BUFFER, m_skyVBO);
+	glEnableVertexAttribArray(m_vertAttribLocation);
+	glVertexAttribPointer(m_vertAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_skyIndexVBO);
+
+	glDrawElements(GL_LINE_STRIP, m_vertexIndexSize, GL_UNSIGNED_SHORT, 0);
+	htCheckGLError("drawGroundWithMesh");
 }
 
 bool WYSky::initSkyTexture(const char* texName)
 {
+	clearSkyTexture();
+	QImage image = QImage(texName).convertToFormat(QImage::Format_RGBA8888);
+	if(image.width() < 1)
+	{
+		LOG_ERROR("Failed to open file %s!\n", texName);
+		return false;
+	}
 
-	return true;
+	m_skyTexture = htGenTextureWithBuffer(image.bits(), image.width(), image.height(), GL_RGBA, GL_UNSIGNED_BYTE);
+
+	htCheckGLError("initGroundTexture");
+	return m_skyTexture != 0;
 }
 
 void WYSky::clearSkyTexture()
@@ -187,7 +232,7 @@ bool WYSky::initPrograms()
 	{
 		delete m_program;
 		m_program = NULL;
-		LOG_ERROR("Ground : Program link failed!\n");
+		LOG_ERROR("WYSky : Program link failed!\n");
 		return false;
 	}
 
@@ -199,19 +244,14 @@ bool WYSky::initPrograms()
 	{
 		delete m_programMesh;
 		m_programMesh = NULL;
-		LOG_ERROR("Ground : Program link failed!\n");
+		LOG_ERROR("WYSky : Program link failed!\n");
 		return false;
 	}
 
 	m_vertAttribLocation = 0;
 	m_program->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
 	m_programMesh->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
-	htCheckGLError("Ground::initPrograms");
-	return true;
-}
-
-bool WYSky::initProgramsMesh()
-{
+	htCheckGLError("WYSky::initPrograms");
 	return true;
 }
 

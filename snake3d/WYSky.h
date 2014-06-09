@@ -32,7 +32,6 @@ protected:
 	void clearSkyTexture();
 	void clearSkyBuffers();
 	bool initPrograms();
-	bool initProgramsMesh();
 	void clearProgram();
 
 protected:

@@ -39,7 +39,7 @@ void main()
 }
 );
 
-WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f), m_fovyRad(M_PI / 3.0f)
+WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f), m_fovyRad(M_PI / 3.0f), m_sky(NULL)
 {
 	if(g_sceneWindow != NULL)
 	{
@@ -73,6 +73,10 @@ void WYSceneWindow::paintGL()
 	
 	HTAlgorithm::Mat4 qmat = m_m4Projection * m_m4ModelView;
 	
+	m_sky->drawSky(qmat);
+
+	m_sky->drawSkyWithMesh(qmat);
+
 	m_ground->drawGround(qmat);
 	
 //	m_ground->drawGroundWithMesh(qmat);
@@ -112,6 +116,12 @@ void WYSceneWindow::initializeGL()
 	if(!m_ground->initWithStage(g_stage1, g_stage1Width, g_stage1Height, g_stage1GroundTextureName))
 	{
 		LOG_ERROR("Init Stage Failed!");
+	}
+
+	m_sky = new WYSky;
+	if(!m_sky->initSky(g_skyTextureName))
+	{
+		LOG_ERROR("Init Sky Failed\n!");
 	}
 
 	QTimer *timer = new QTimer(this);
@@ -156,8 +166,8 @@ void WYSceneWindow::mouseMoveEvent(QMouseEvent *e)
 
 	if(m_headUp < -m_farAway / 2.0f)
 		m_headUp = -m_farAway / 2.0f;
-	else if(m_headUp > m_farAway)
-		m_headUp = m_farAway;
+	else if(m_headUp > m_farAway*2.0f)
+		m_headUp = m_farAway*2.0f;
 
 	m_lastX = e->x();
 	m_lastY = e->y();

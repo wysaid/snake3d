@@ -20,6 +20,7 @@
 
 #include "WYStages.h"
 #include "WYGround.h"
+#include "WYSky.h"
 
 using namespace Snake3D;
 
@@ -28,6 +29,7 @@ class WYMainWindow;
 class QGLWidget;
 class QGLFunctions;
 class WYGround;
+class WYSky;
 
 class WYSceneWindow : public QGLWidget
 {
@@ -72,6 +74,7 @@ private:
 
 private:
 	WYGround* m_ground;
+	WYSky* m_sky;
 	int m_lastX, m_lastY;
 	float m_farAway, m_headUp;
 	float m_fovyRad;

@@ -8,7 +8,7 @@
 
 #include "WYGround.h"
 
-#define GROUND_TEXTURE_ID GL_TEXTURE0
+#define GROUND_TEXTURE_ID GL_TEXTURE1
 #define GROUND_TEXTURE_INDEX (GROUND_TEXTURE_ID - GL_TEXTURE0)
 
 static const char* const s_vshGroundNoTexture = SHADER_STRING
@@ -112,8 +112,8 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 
 	index = 0;
 	std::vector<unsigned short> meshIndexes;
-	m_groundIndexSize = w * h * 2;
-	meshIndexes.resize(m_groundIndexSize * 3);
+	m_groundIndexSize = w * h * 6;
+	meshIndexes.resize(m_groundIndexSize);
 
 	for(int i = 0; i < h; ++i)
 	{
@@ -152,8 +152,8 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_groundIndexVBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshIndexes.size() * sizeof(meshIndexes[0]), meshIndexes.data(), GL_STATIC_DRAW);
 
-	m_meshIndexSize = (w + 1) * (h + 1) * 2;
-	meshIndexes.resize(2 * m_meshIndexSize);
+	m_meshIndexSize = (w + 1) * (h + 1) * 4;
+	meshIndexes.resize(m_meshIndexSize);
 
 	index = 0;
 
@@ -230,7 +230,7 @@ void WYGround::drawGround(const HTAlgorithm::Mat4& mvp)
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_groundIndexVBO);
 	
-	glDrawElements(GL_TRIANGLES, m_groundIndexSize * 3, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, m_groundIndexSize, GL_UNSIGNED_SHORT, 0);
 	htCheckGLError("drawGround");
 }
 
@@ -245,7 +245,7 @@ void WYGround::drawGroundWithMesh(const HTAlgorithm::Mat4& mvp)
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_groundMeshIndexVBO);
 
-	glDrawElements(GL_LINES, m_meshIndexSize * 2, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_LINES, m_meshIndexSize, GL_UNSIGNED_SHORT, 0);
 	htCheckGLError("drawGroundWithMesh");
 }
 
