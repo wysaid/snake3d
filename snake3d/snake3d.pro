@@ -23,6 +23,7 @@ SOURCES += main.cpp\
     WYGround.cpp\
     htPlatform_QT.cpp \
     htShaderFunctions.cpp \
+    WYSky.cpp \
 
 HEADERS  += wymainwindow.h \
     WYScenewindow.h \
@@ -33,7 +34,8 @@ HEADERS  += wymainwindow.h \
     htVec.h\
     htStaticAssert.h\
     WYStages.h\
-    htShaderFunctions.h
+    htShaderFunctions.h \
+    WYSky.h\
 
 FORMS    += wymainwindow.ui
 
