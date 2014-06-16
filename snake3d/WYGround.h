@@ -35,6 +35,8 @@ protected:
 	bool initProgramsNoTexture();
 	void clearProgram();
 
+	static void genCube(std::vector<HTAlgorithm::Vec3f>& vertexData, std::vector<unsigned short>& indexData, float x, float y, float width, float height);
+
 protected:
 	GLuint m_groundVBO, m_groundIndexVBO, m_groundMeshIndexVBO;
 	std::vector<HTAlgorithm::Vec3f> m_groundVertices;

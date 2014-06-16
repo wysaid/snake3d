@@ -12,7 +12,7 @@
 #define SKY_TEXTURE_ID GL_TEXTURE2
 #define SKY_TEXTURE_INDEX (SKY_TEXTURE_ID - GL_TEXTURE0)
 
-#define SKY_RADIUS 1.0f
+#define SKY_RADIUS 2.0f
 #define SKY_RADIUS_VERTEX_SIZE 10
 #define SKY_PERIMETER_VERTEX_SIZE (SKY_RADIUS_VERTEX_SIZE * 3)
 
@@ -36,11 +36,13 @@ attribute vec4 v4Position;
 uniform mat4 m4MVP;
 varying vec2 v2TexCoord;
 
+const float skyRadius = 2.0;
+
 void main()
 {
 
 	gl_Position = m4MVP * v4Position;
-	v2TexCoord = (v4Position.xy + 1.0) / 2.0;
+	v2TexCoord = (v4Position.xy / skyRadius + 1.0) / 2.0;
 }
 );
 

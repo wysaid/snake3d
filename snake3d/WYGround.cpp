@@ -67,6 +67,7 @@ void main()
 }
 );
 
+
 const char* const WYGround::paramModelviewMatrixName = "m4MVP";
 const char* const WYGround::paramVertexPositionName = "v4Position";
 const char* const WYGround::paramGroundTextureName = "groundTexture";
@@ -80,6 +81,61 @@ WYGround::WYGround() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO
 WYGround::~WYGround()
 {
 	clearGround();
+}
+
+void WYGround::genCube(std::vector<HTAlgorithm::Vec3f>& vertexData, std::vector<unsigned short>& indexData, float x, float y, float width, float height)
+{
+	using HTAlgorithm::Vec3f;
+	const float widthStep = 1.0f / width, heightStep = 1.0f / height;
+	const Vec3f v(x * widthStep * 2.0f - 1.0f, y * heightStep * 2.0f - 1.0f, 0.0f);
+
+	std::vector<HTAlgorithm::Vec3f>::size_type index = vertexData.size(), indexUp = index + 4;
+
+	vertexData.push_back(v + Vec3f(-widthStep / 2.0f, heightStep / 2.0f, 0.0f));
+	vertexData.push_back(v - Vec3f(widthStep / 2.0f, heightStep / 2.0f, 0.0f));
+	vertexData.push_back(v + Vec3f(widthStep / 2.0f, -heightStep / 2.0f, 0.0f));
+	vertexData.push_back(v + Vec3f(widthStep / 2.0f, heightStep / 2.0f, 0.0f));
+
+	const float z = 1.0f / HT_MAX(width, height);
+
+	vertexData.push_back(v + Vec3f(-widthStep / 2.0f, heightStep / 2.0f, z));
+	vertexData.push_back(v - Vec3f(widthStep / 2.0f, heightStep / 2.0f, -z));
+	vertexData.push_back(v + Vec3f(widthStep / 2.0f, -heightStep / 2.0f, z));
+	vertexData.push_back(v + Vec3f(widthStep / 2.0f, heightStep / 2.0f, z));
+
+	//////////////////////////////////////////////////////////////////////////
+
+	const unsigned short dataIndex[] = 
+	{
+		//左面
+		index, index + 1, indexUp,
+		indexUp, index + 1, indexUp + 1,
+
+		//前面
+		index + 1, index + 2, indexUp + 1,
+		indexUp + 1 , index + 2, indexUp + 2,
+
+		//右面
+		index + 2, index + 3, indexUp + 2,
+		indexUp + 2, index + 3, indexUp + 3,
+
+		//后面
+		index + 3, index, indexUp + 3,
+		indexUp + 3, index, indexUp,
+
+		//上面
+		indexUp, indexUp + 1, indexUp + 2,
+		indexUp, indexUp + 2, indexUp + 3
+	};
+
+	const int sz = sizeof(dataIndex) / sizeof(*dataIndex);
+	for(int i = 0; i != sz; ++i)
+	{
+		indexData.push_back(dataIndex[i]);
+	}
+
+
+
 }
 
 bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName)
@@ -96,8 +152,7 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 	int index = 0;
 	for(int i = 0; i <= h; ++i)
 	{
-//		const float line = (w + 1) * i;
-		const float heightI = i * widthStep;
+		const float heightI = i * heightStep;
 
 		for(int j = 0; j <= w; ++j)
 		{
@@ -105,10 +160,6 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 			m_groundVertices[index++] = v;
 		}
 	}
-
-	glGenBuffers(1, &m_groundVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_groundVBO);
-	glBufferData(GL_ARRAY_BUFFER, m_groundVertices.size() * sizeof(m_groundVertices[0]), m_groundVertices.data(), GL_DYNAMIC_DRAW);
 
 	index = 0;
 	std::vector<unsigned short> meshIndexes;
@@ -148,12 +199,33 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 		}
 	}
 
+	for(int i = 0; i < h; ++i)
+	{
+		for(int j = 0; j < w; ++j)
+		{
+			switch (stage[j + i * w])
+			{
+			case 1:
+				genCube(m_groundVertices, meshIndexes, i, j, w, h);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	m_groundIndexSize = meshIndexes.size();
+
+	glGenBuffers(1, &m_groundVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_groundVBO);
+	glBufferData(GL_ARRAY_BUFFER, m_groundVertices.size() * sizeof(m_groundVertices[0]), m_groundVertices.data(), GL_STATIC_DRAW);
+
 	glGenBuffers(1, &m_groundIndexVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_groundIndexVBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshIndexes.size() * sizeof(meshIndexes[0]), meshIndexes.data(), GL_STATIC_DRAW);
 
 	m_meshIndexSize = (w + 1) * (h + 1) * 4;
-	meshIndexes.resize(m_meshIndexSize);
+	std::vector<unsigned short>	meshIndexes2(m_meshIndexSize);
 
 	index = 0;
 
@@ -164,14 +236,14 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 
 		for(int j = 0; j < w; ++j)
 		{
-			meshIndexes[index] = pos1 + j;
-			meshIndexes[index + 1] = pos1 + j + 1;
-			meshIndexes[index + 2] = pos1 + j;
-			meshIndexes[index + 3] = pos2 + j;
+			meshIndexes2[index] = pos1 + j;
+			meshIndexes2[index + 1] = pos1 + j + 1;
+			meshIndexes2[index + 2] = pos1 + j;
+			meshIndexes2[index + 3] = pos2 + j;
 			index += 4;
 		}
-		meshIndexes[index] = pos1 + w;
-		meshIndexes[index + 1] = pos2 + w;
+		meshIndexes2[index] = pos1 + w;
+		meshIndexes2[index + 1] = pos2 + w;
 		index += 2;
 	}
 
@@ -179,14 +251,14 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 
 	for(int i = 0; i < w; ++i)
 	{
-		meshIndexes[index] = pos + i;
-		meshIndexes[index + 1] = pos + i + 1;
+		meshIndexes2[index] = pos + i;
+		meshIndexes2[index + 1] = pos + i + 1;
 		index += 2;
 	}
 
 	glGenBuffers(1, &m_groundMeshIndexVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_groundMeshIndexVBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshIndexes.size() * sizeof(meshIndexes[0]), meshIndexes.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshIndexes2.size() * sizeof(meshIndexes2[0]), meshIndexes2.data(), GL_STATIC_DRAW);
 
 	htCheckGLError("WYGround::initWithStage");
 

@@ -39,7 +39,7 @@ void main()
 }
 );
 
-WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f), m_fovyRad(M_PI / 3.0f), m_sky(NULL)
+WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f), m_fovyRad(M_PI / 3.0f), m_sky(NULL),m_zHeight(0.1f)
 {
 	if(g_sceneWindow != NULL)
 	{
@@ -75,11 +75,11 @@ void WYSceneWindow::paintGL()
 	
 	m_sky->drawSky(qmat);
 
-	m_sky->drawSkyWithMesh(qmat);
+//	m_sky->drawSkyWithMesh(qmat);
 
 	m_ground->drawGround(qmat);
 	
-//	m_ground->drawGroundWithMesh(qmat);
+	m_ground->drawGroundWithMesh(qmat);
 
 	swapBuffers();
 }
@@ -200,6 +200,12 @@ void WYSceneWindow::keyPressEvent(QKeyEvent *e)
 	case Qt::Key_Down: case Qt::Key_S:
 		goBack(motion);
 		break;
+	case Qt::Key_J:
+		m_zHeight -= 0.01f;
+		break;
+	case Qt::Key_K:
+		m_zHeight += 0.01f;
+		break;
 	default:
 		return;
 	}
@@ -255,7 +261,7 @@ void WYSceneWindow::updateModelView()
 	const float len = v2Dir.length();
 	const Vec2f v2DirBack = v2Dir * (- m_headUp / len);
 	
-	m_m4ModelView = HTAlgorithm::Mat4::makeLookAt(m_v2Position[0], m_v2Position[1], 0.1f, v2Dir[0], v2Dir[1], m_headUp, v2DirBack[0], v2DirBack[1], len);
+	m_m4ModelView = HTAlgorithm::Mat4::makeLookAt(m_v2Position[0], m_v2Position[1], m_zHeight, v2Dir[0], v2Dir[1], m_headUp, v2DirBack[0], v2DirBack[1], len);
 	
 }
 

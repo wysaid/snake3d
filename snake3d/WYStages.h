@@ -24,7 +24,7 @@
 
 namespace Snake3D
 {
-	const char* const g_skyTextureName = ":/Snake3D/res/sky.jpg";
+	const char* const g_skyTextureName = ":/Snake3D/res/sky3.jpg";
 
 	const int g_stage1[] = 
 	{
@@ -32,11 +32,11 @@ namespace Snake3D
 		0,0,0, 0,0,0, 0,0,0, 0,
 		0,0,0, 0,0,0, 0,0,0, 0,
 
-		0,0,0, 0,0,0, 0,0,0, 0,
+		0,0,0, 1,0,0, 0,0,0, 0,
 		0,0,0, 0,0,0, 0,0,0, 0,
 		0,0,0, 0,0,0, 0,0,0, 0,
 
-		0,0,0, 0,0,0, 0,0,0, 0,
+		0,0,0, 1,0,0, 0,0,0, 0,
 		0,0,0, 0,0,0, 0,0,0, 0,
 		0,0,0, 0,0,0, 0,0,0, 0,
 

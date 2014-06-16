@@ -78,6 +78,7 @@ private:
 	int m_lastX, m_lastY;
 	float m_farAway, m_headUp;
 	float m_fovyRad;
+	float m_zHeight;
 	bool m_bIsMouseDown;
 
 };

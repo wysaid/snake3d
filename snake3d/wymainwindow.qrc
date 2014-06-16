@@ -3,5 +3,9 @@
       <file>res/ground1.jpg</file>
       <file>res/ground2.jpg</file>
       <file>res/sky.jpg</file>
+      <file>res/sky1.jpg</file>
+      <file>res/sky2.jpg</file>
+      <file>res/sky3.jpg</file>
+      <file>res/sky4.jpg</file>
     </qresource>
 </RCC>
