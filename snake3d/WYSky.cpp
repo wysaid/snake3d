@@ -12,7 +12,7 @@
 #define SKY_TEXTURE_ID GL_TEXTURE2
 #define SKY_TEXTURE_INDEX (SKY_TEXTURE_ID - GL_TEXTURE0)
 
-#define SKY_RADIUS 2.0f
+#define SKY_RADIUS 10.0f
 #define SKY_RADIUS_VERTEX_SIZE 10
 #define SKY_PERIMETER_VERTEX_SIZE (SKY_RADIUS_VERTEX_SIZE * 3)
 
@@ -36,7 +36,7 @@ attribute vec4 v4Position;
 uniform mat4 m4MVP;
 varying vec2 v2TexCoord;
 
-const float skyRadius = 2.0;
+const float skyRadius = 10.0;
 
 void main()
 {
@@ -205,7 +205,7 @@ bool WYSky::initSkyTexture(const char* texName)
 
 	m_skyTexture = htGenTextureWithBuffer(image.bits(), image.width(), image.height(), GL_RGBA, GL_UNSIGNED_BYTE);
 
-	htCheckGLError("initGroundTexture");
+	htCheckGLError("initSkyTexture");
 	return m_skyTexture != 0;
 }
 

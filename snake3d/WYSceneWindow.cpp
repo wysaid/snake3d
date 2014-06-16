@@ -39,7 +39,7 @@ void main()
 }
 );
 
-WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f), m_fovyRad(M_PI / 3.0f), m_sky(NULL),m_zHeight(0.1f)
+WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_programDrawNormal(NULL), m_programDrawMesh(NULL), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f), m_fovyRad(M_PI / 3.0f), m_sky(NULL),m_zHeight(1.0f)
 {
 	if(g_sceneWindow != NULL)
 	{
@@ -75,7 +75,7 @@ void WYSceneWindow::paintGL()
 	
 	m_sky->drawSky(qmat);
 
-//	m_sky->drawSkyWithMesh(qmat);
+	m_sky->drawSkyWithMesh(qmat);
 	glEnable(GL_DEPTH_TEST);
 	m_ground->drawGround(qmat);
 	glDisable(GL_DEPTH_TEST);
@@ -184,7 +184,7 @@ void WYSceneWindow::keyPressEvent(QKeyEvent *e)
 {
 	using namespace HTAlgorithm;
 
-	float motion = 0.02f;
+	float motion = 0.2f;
 
 	switch (e->key())
 	{
@@ -201,10 +201,10 @@ void WYSceneWindow::keyPressEvent(QKeyEvent *e)
 		goBack(motion);
 		break;
 	case Qt::Key_J:
-		m_zHeight -= 0.01f;
+		m_zHeight -= motion;
 		break;
 	case Qt::Key_K:
-		m_zHeight += 0.01f;
+		m_zHeight += motion;
 		break;
 	default:
 		return;

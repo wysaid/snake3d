@@ -29,12 +29,14 @@ attribute vec4 v4Position;
 uniform mat4 m4MVP;
 varying vec2 v2TexCoord;
 uniform vec2 v2GroundSize;
+varying float fHeight;
 
 void main()
 {
 
 	gl_Position = m4MVP * v4Position;
-	v2TexCoord = (v4Position.xy + 1.0) / 2.0 * v2GroundSize;
+	v2TexCoord = (v4Position.xy + 1.0) / 2.0;// / v2GroundSize;
+	fHeight = v4Position.z * 5.0;
 }
 );
 
@@ -50,12 +52,13 @@ static const char* const s_fshGround = SHADER_STRING_PRECISION_M
 (
 uniform sampler2D groundTexture;
 varying vec2 v2TexCoord;
-
+varying float fHeight;
 
 void main()
 {
 	//gl_FragColor = texture2D(groundTexture, fract(v2TexCoord));
 	gl_FragColor = texture2D(groundTexture, v2TexCoord);
+	gl_FragColor.rb *= fHeight;
 }
 );
 
@@ -86,22 +89,26 @@ WYGround::~WYGround()
 void WYGround::genCube(std::vector<HTAlgorithm::Vec3f>& vertexData, std::vector<unsigned short>& indexData, float x, float y, float width, float height)
 {
 	using HTAlgorithm::Vec3f;
-	const float widthStep = 1.0f / width, heightStep = 1.0f / height;
-	const Vec3f v(x * widthStep * 2.0f - 1.0f, y * heightStep * 2.0f - 1.0f, 0.0f);
+	const float widthStep = 1.0f;
+	const float heightStep = 1.0f;
+	const float halfWidth = width;
+	const float halfHeight = height;
+
+	const Vec3f v(x * widthStep * 2.0f - halfWidth, y * heightStep * 2.0f - halfHeight, 0.0f);
 
 	std::vector<HTAlgorithm::Vec3f>::size_type index = vertexData.size(), indexUp = index + 4;
 
-	vertexData.push_back(v + Vec3f(-widthStep / 2.0f, heightStep / 2.0f, 0.0f));
-	vertexData.push_back(v - Vec3f(widthStep / 2.0f, heightStep / 2.0f, 0.0f));
-	vertexData.push_back(v + Vec3f(widthStep / 2.0f, -heightStep / 2.0f, 0.0f));
-	vertexData.push_back(v + Vec3f(widthStep / 2.0f, heightStep / 2.0f, 0.0f));
+	vertexData.push_back(v + Vec3f(-widthStep, heightStep, 0.0f));
+	vertexData.push_back(v - Vec3f(widthStep, heightStep, 0.0f));
+	vertexData.push_back(v + Vec3f(widthStep, -heightStep, 0.0f));
+	vertexData.push_back(v + Vec3f(widthStep, heightStep, 0.0f));
 
-	const float z = 1.0f / HT_MAX(width, height);
+	const float z = 1.0f;
 
-	vertexData.push_back(v + Vec3f(-widthStep / 2.0f, heightStep / 2.0f, z));
-	vertexData.push_back(v - Vec3f(widthStep / 2.0f, heightStep / 2.0f, -z));
-	vertexData.push_back(v + Vec3f(widthStep / 2.0f, -heightStep / 2.0f, z));
-	vertexData.push_back(v + Vec3f(widthStep / 2.0f, heightStep / 2.0f, z));
+	vertexData.push_back(v + Vec3f(-widthStep, heightStep, z));
+	vertexData.push_back(v - Vec3f(widthStep, heightStep, -z));
+	vertexData.push_back(v + Vec3f(widthStep, -heightStep, z));
+	vertexData.push_back(v + Vec3f(widthStep, heightStep, z));
 
 	//////////////////////////////////////////////////////////////////////////
 
@@ -145,8 +152,10 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 
 	clearGround();
 
-	const float widthStep = 1.0f / w;
-	const float heightStep = 1.0f / h;
+	const float widthStep = 1.0f;
+	const float heightStep = 1.0f;
+	const float halfWidth = w;
+	const float halfHeight = h;
 
 	m_groundVertices.resize((w + 1) * (h + 1));
 	int index = 0;
@@ -156,7 +165,7 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 
 		for(int j = 0; j <= w; ++j)
 		{
-			const HTAlgorithm::Vec3f v(j * widthStep * 2.0f - 1.0f, heightI * 2.0f - 1.0f, 0.0f);
+			const HTAlgorithm::Vec3f v(j * widthStep * 2.0f - halfWidth, heightI * 2.0f - halfHeight, 0.0f);
 			m_groundVertices[index++] = v;
 		}
 	}
