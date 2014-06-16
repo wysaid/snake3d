@@ -59,7 +59,7 @@ WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_programDraw
     makeCurrent();
 }
 
-WYSceneWindow::~WYSceneWindow()
+WYSceneWindow::~WYSceneWindow() 
 {
     makeCurrent();
 	delete m_programDrawNormal;
@@ -76,9 +76,9 @@ void WYSceneWindow::paintGL()
 	m_sky->drawSky(qmat);
 
 //	m_sky->drawSkyWithMesh(qmat);
-
+	glEnable(GL_DEPTH_TEST);
 	m_ground->drawGround(qmat);
-	
+	glDisable(GL_DEPTH_TEST);
 	m_ground->drawGroundWithMesh(qmat);
 
 	swapBuffers();
@@ -110,7 +110,7 @@ void WYSceneWindow::initializeGL()
 		LOG_ERROR("Program link failed!\n");
 	}
 
-	glClearColor(0.2f, 0.2f, 0.1f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	m_ground = new WYGround;
 	if(!m_ground->initWithStage(g_stage1, g_stage1Width, g_stage1Height, g_stage1GroundTextureName))
