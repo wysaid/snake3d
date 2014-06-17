@@ -39,7 +39,7 @@ void main()
 }
 );
 
-WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f), m_fovyRad(M_PI / 3.0f), m_sky(NULL),m_zHeight(1.0f)
+WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f), m_fovyRad(M_PI / 3.0f), m_sky(NULL),m_zHeight(1.5f)
 {
 	if(g_sceneWindow != NULL)
 	{

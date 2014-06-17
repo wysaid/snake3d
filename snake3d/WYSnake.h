@@ -1,9 +1,10 @@
-/*
+﻿/*
  * WYSnake.h
  *
  *  Created on: 2014-6-17
  *      Author: Wang Yang
  *        Mail: admin@wysaid.org
+ * Description: First time to use skeleton animation, and I'll use my own method.
 */
 
 #ifndef _WYSNAKE_H_
@@ -11,28 +12,54 @@
 
 #include "htShaderFunctions.h"
 
+//本游戏中的蛇实际上依旧在二维平面上跑(xOy平面)， 所以不需要考虑z值
+//关于贪吃蛇拐弯原理： 蛇身每个节点都有自己前进的方向，
+//蛇身每个节点在向前运动时会与前一个节点之间坐标差与前进方向计算点积，若小于等于0，才转弯。（实现平滑移动)
+struct SnakeBody
+{
+	SnakeBody() : x(), y(), dx(), dy() {}
+	SnakeBody(float fx, float fy, float fdx, float fdy) : x(fx), y(fy), dx(fdx), dy(fdy) {}
+	float x, y;
+	float dx, dy;
+};
+
 class WYSnake
 {
 public:
 	WYSnake();
 	~WYSnake();
 
-	bool init(float x, float y, float len = 3.0f, float xNorm = 0.0f, float yNorm = 1.0f);
+	//x, y表示蛇头位置
+	//len表示蛇身长度
+	//xNorm与yNorm表示蛇身与蛇头初始状态下的朝向（初始状态下没有弯曲）
+	bool init(float x, float y, float len = 3.0f, float xNorm = 0.0f, float yNorm = 1.0f);	
 
 	void drawSnake(const HTAlgorithm::Mat4& mvp);
 
-protected:
+	void move(float motion);
+	void turnLeft();
+	void turnRight();
 
+protected:
+	static const char* const paramModelviewMatrixName;
+	static const char* const paramVertexPositionName;
+	static const char* const paramSnakeTextureName;
 
 	bool initSnakeTexture(const char* texName);
 	void clearSnakeTexture();
-	bool initProgram();
-	void clearProgram();
+	bool initPrograms();
+	void initSnakeBuffers();
+	void clearSnakeBuffers();
+	void genModelBySkeleton(); //根据骨骼生成模型
+	void genFacesBySkeleton();
 
 protected:
 	GLuint m_snakeVBO, m_snakeIndexVBO;
-	std::vector<HTAlgorithm::Vec3f> m_snakeSkeletonVertices;
-	ProgramObject m_program;
+	GLuint m_snakeVertIndexSize;
+	std::vector<SnakeBody> m_snakeSkeleton;
+	ProgramObject m_program, m_programMesh;
+	GLuint m_vertAttribLocation;
+	GLuint m_snakeTexture;
 };
 
 
