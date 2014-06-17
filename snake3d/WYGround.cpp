@@ -96,7 +96,7 @@ void WYGround::genCube(std::vector<HTAlgorithm::Vec3f>& vertexData, std::vector<
 
 	const Vec3f v(x * widthStep * 2.0f - halfWidth, y * heightStep * 2.0f - halfHeight, 0.0f);
 
-	std::vector<HTAlgorithm::Vec3f>::size_type index = vertexData.size(), indexUp = index + 4;
+	const std::vector<Vec3f>::size_type index = vertexData.size(), indexUp = index + 4;
 
 	vertexData.push_back(v + Vec3f(-widthStep, heightStep, 0.0f));
 	vertexData.push_back(v - Vec3f(widthStep, heightStep, 0.0f));
@@ -112,27 +112,27 @@ void WYGround::genCube(std::vector<HTAlgorithm::Vec3f>& vertexData, std::vector<
 
 	//////////////////////////////////////////////////////////////////////////
 
-	const unsigned short dataIndex[] = 
+	const std::vector<Vec3f>::size_type dataIndex[] = 
 	{
 		//左面
-		index, index + 1, indexUp,
-		indexUp, index + 1, indexUp + 1,
+		index, index + 1u, indexUp,
+		indexUp, index + 1u, indexUp + 1u,
 
 		//前面
-		index + 1, index + 2, indexUp + 1,
-		indexUp + 1 , index + 2, indexUp + 2,
+		index + 1u, index + 2u, indexUp + 1u,
+		indexUp + 1u , index + 2u, indexUp + 2u,
 
 		//右面
-		index + 2, index + 3, indexUp + 2,
-		indexUp + 2, index + 3, indexUp + 3,
+		index + 2u, index + 3u, indexUp + 2u,
+		indexUp + 2u, index + 3u, indexUp + 3u,
 
 		//后面
-		index + 3, index, indexUp + 3,
-		indexUp + 3, index, indexUp,
+		index + 3u, index, indexUp + 3u,
+		indexUp + 3u, index, indexUp,
 
 		//上面
-		indexUp, indexUp + 1, indexUp + 2,
-		indexUp, indexUp + 2, indexUp + 3
+		indexUp, indexUp + 1u, indexUp + 2u,
+		indexUp, indexUp + 2u, indexUp + 3u
 	};
 
 	const int sz = sizeof(dataIndex) / sizeof(*dataIndex);
@@ -140,9 +140,6 @@ void WYGround::genCube(std::vector<HTAlgorithm::Vec3f>& vertexData, std::vector<
 	{
 		indexData.push_back(dataIndex[i]);
 	}
-
-
-
 }
 
 bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName)
