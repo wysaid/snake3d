@@ -103,6 +103,7 @@
     <ClCompile Include="WYSceneWindow.cpp" />
     <ClCompile Include="WYSky.cpp" />
     <ClCompile Include="wymainwindow.cpp" />
+    <ClCompile Include="WYSnake.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="wymainwindow.h">
@@ -161,6 +162,7 @@
     <ClInclude Include="htStaticAssert.h" />
     <ClInclude Include="htVec.h" />
     <ClInclude Include="WYSky.h" />
+    <ClInclude Include="WYSnake.h" />
     <ClInclude Include="WYStages.h" />
   </ItemGroup>
   <ItemGroup>

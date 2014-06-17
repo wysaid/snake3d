@@ -32,12 +32,11 @@ protected:
 	void clearSkyTexture();
 	void clearSkyBuffers();
 	bool initPrograms();
-	void clearProgram();
 
 protected:
 	GLuint m_skyVBO, m_skyIndexVBO;
 	GLuint m_skyTexture;
-	ProgramObject *m_program, *m_programMesh;
+	ProgramObject m_program, m_programMesh;
 	GLuint m_vertAttribLocation;
 	GLuint m_vertexIndexSize;
 };

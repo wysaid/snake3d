@@ -71,14 +71,13 @@ const char* const WYSky::paramModelviewMatrixName = "m4MVP";
 const char* const WYSky::paramVertexPositionName = "v4Position";
 const char* const WYSky::paramSkyTextureName = "skyTexture";
 
-WYSky::WYSky() : m_skyVBO(0), m_skyIndexVBO(0), m_skyTexture(0), m_program(NULL), m_programMesh(NULL)
+WYSky::WYSky() : m_skyVBO(0), m_skyIndexVBO(0), m_skyTexture(0)
 {
 	m_vertAttribLocation = 0;
 }
 
 WYSky::~WYSky()
 {
-	clearProgram();
 	clearSkyTexture();
 	clearSkyBuffers();
 }
@@ -156,15 +155,15 @@ bool WYSky::initSky(const char* texName)
 
 void WYSky::drawSky(const HTAlgorithm::Mat4& mvp)
 {
-	if(m_program == NULL || m_skyTexture == 0)
+	if(m_skyTexture == 0)
 		return drawSkyWithMesh(mvp);
 
-	m_program->bind();
-	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
+	m_program.bind();
+	m_program.sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
 
 	glActiveTexture(SKY_TEXTURE_ID);
 	glBindTexture(GL_TEXTURE_2D, m_skyTexture);
-	m_program->sendUniformi(paramSkyTextureName, SKY_TEXTURE_INDEX);
+	m_program.sendUniformi(paramSkyTextureName, SKY_TEXTURE_INDEX);
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_skyVBO);
@@ -180,8 +179,8 @@ void WYSky::drawSky(const HTAlgorithm::Mat4& mvp)
 
 void WYSky::drawSkyWithMesh(const HTAlgorithm::Mat4& mvp)
 {
-	m_programMesh->bind();
-	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
+	m_programMesh.bind();
+	m_program.sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_skyVBO);
 	glEnableVertexAttribArray(m_vertAttribLocation);
@@ -224,42 +223,26 @@ void WYSky::clearSkyBuffers()
 
 bool WYSky::initPrograms()
 {
-	clearProgram();
 
-	m_program = new ProgramObject;
-
-	if(!(m_program->initVertexShaderSourceFromString(s_vshSky) &&
-		m_program->initFragmentShaderSourceFromString(s_fshSky) &&
-		m_program->link()))
+	if(!(m_program.initVertexShaderSourceFromString(s_vshSky) &&
+		m_program.initFragmentShaderSourceFromString(s_fshSky) &&
+		m_program.link()))
 	{
-		delete m_program;
-		m_program = NULL;
 		LOG_ERROR("WYSky : Program link failed!\n");
 		return false;
 	}
 
-	m_programMesh = new ProgramObject;
-
-	if(!(m_programMesh->initVertexShaderSourceFromString(s_vshSkyNoTexture) &&
-		m_programMesh->initFragmentShaderSourceFromString(s_fshSkyNoTexture) &&
-		m_programMesh->link()))
+	if(!(m_programMesh.initVertexShaderSourceFromString(s_vshSkyNoTexture) &&
+		m_programMesh.initFragmentShaderSourceFromString(s_fshSkyNoTexture) &&
+		m_programMesh.link()))
 	{
-		delete m_programMesh;
-		m_programMesh = NULL;
 		LOG_ERROR("WYSky : Program link failed!\n");
 		return false;
 	}
 
 	m_vertAttribLocation = 0;
-	m_program->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
-	m_programMesh->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	m_program.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	m_programMesh.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
 	htCheckGLError("WYSky::initPrograms");
 	return true;
-}
-
-void WYSky::clearProgram()
-{
-	delete m_programMesh;
-	delete m_program;
-	m_programMesh = m_program = NULL;
 }

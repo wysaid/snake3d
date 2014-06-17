@@ -68,7 +68,6 @@ protected:
 
 
 private:
-	ProgramObject *m_programDrawNormal, *m_programDrawMesh;
 	HTAlgorithm::Mat4 m_m4ModelView, m_m4Projection;
 	HTAlgorithm::Vec2f m_v2Direction, m_v2Position;
 

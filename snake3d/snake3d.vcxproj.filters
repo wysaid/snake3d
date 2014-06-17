@@ -74,6 +74,9 @@
     <ClCompile Include="WYSky.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WYSnake.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="wymainwindow.h">
@@ -118,6 +121,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WYStages.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WYSnake.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

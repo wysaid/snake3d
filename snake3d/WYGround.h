@@ -27,23 +27,22 @@ protected:
 	static const char* const paramModelviewMatrixName;
 	static const char* const paramVertexPositionName;
 	static const char* const paramGroundTextureName;
-	static const char* const paramGroundSizeName;
+//	static const char* const paramGroundSizeName;
 
 	bool initGroundTexture(const char* texName);
 	void clearGroundTexture();
 	bool initPrograms();
 	bool initProgramsNoTexture();
-	void clearProgram();
 
 	static void genCube(std::vector<HTAlgorithm::Vec3f>& vertexData, std::vector<unsigned short>& indexData, float x, float y, float width, float height);
 
 protected:
 	GLuint m_groundVBO, m_groundIndexVBO, m_groundMeshIndexVBO;
 	std::vector<HTAlgorithm::Vec3f> m_groundVertices;
-	HTAlgorithm::Vec2f m_groundSize;
+//	HTAlgorithm::Vec2f m_groundSize;
 	GLuint m_groundIndexSize, m_meshIndexSize;
 	GLuint m_groundTexture;
-	ProgramObject *m_program, *m_programMesh;
+	ProgramObject m_program, m_programMesh;
 	GLuint m_vertAttribLocation;
 };
 

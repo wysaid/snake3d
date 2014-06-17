@@ -28,7 +28,7 @@ static const char* const s_vshGround = SHADER_STRING
 attribute vec4 v4Position;
 uniform mat4 m4MVP;
 varying vec2 v2TexCoord;
-uniform vec2 v2GroundSize;
+//uniform vec2 v2GroundSize;
 varying float fHeight;
 
 void main()
@@ -74,9 +74,9 @@ void main()
 const char* const WYGround::paramModelviewMatrixName = "m4MVP";
 const char* const WYGround::paramVertexPositionName = "v4Position";
 const char* const WYGround::paramGroundTextureName = "groundTexture";
-const char* const WYGround::paramGroundSizeName = "v2GroundSize";
+//const char* const WYGround::paramGroundSizeName = "v2GroundSize";
 
-WYGround::WYGround() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0), m_groundIndexSize(0), m_meshIndexSize(0), m_program(NULL), m_programMesh(NULL), m_groundTexture(0), m_groundSize()
+WYGround::WYGround() : m_groundVBO(0), m_groundIndexVBO(0), m_groundMeshIndexVBO(0), m_groundIndexSize(0), m_meshIndexSize(0), m_groundTexture(0)//, m_groundSize()
 {
 
 }
@@ -144,8 +144,8 @@ void WYGround::genCube(std::vector<HTAlgorithm::Vec3f>& vertexData, std::vector<
 
 bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName)
 {
-	m_groundSize[0] = w;
-	m_groundSize[1] = h;
+// 	m_groundSize[0] = w;
+// 	m_groundSize[1] = h;
 
 	clearGround();
 
@@ -291,15 +291,15 @@ void WYGround::clearGround()
 
 void WYGround::drawGround(const HTAlgorithm::Mat4& mvp)
 {
-	m_program->bind();
-	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
+	m_program.bind();
+	m_program.sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
 
 	if(m_groundTexture != 0)
 	{
 		
 		glActiveTexture(GROUND_TEXTURE_ID);
 		glBindTexture(GL_TEXTURE_2D, m_groundTexture);
-		m_program->sendUniformi(paramGroundTextureName, GROUND_TEXTURE_INDEX);
+		m_program.sendUniformi(paramGroundTextureName, GROUND_TEXTURE_INDEX);
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_groundVBO);
@@ -314,8 +314,8 @@ void WYGround::drawGround(const HTAlgorithm::Mat4& mvp)
 
 void WYGround::drawGroundWithMesh(const HTAlgorithm::Mat4& mvp)
 {
-	m_programMesh->bind();
-	m_program->sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
+	m_programMesh.bind();
+	m_programMesh.sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_groundVBO);
 	glEnableVertexAttribArray(m_vertAttribLocation);
@@ -351,82 +351,56 @@ void WYGround::clearGroundTexture()
 
 bool WYGround::initPrograms()
 {
-	clearProgram();
-
-	m_program = new ProgramObject;
-
-	if(!(m_program->initVertexShaderSourceFromString(s_vshGround) &&
-		m_program->initFragmentShaderSourceFromString(s_fshGround) &&
-		m_program->link()))
+	if(!(m_program.initVertexShaderSourceFromString(s_vshGround) &&
+		m_program.initFragmentShaderSourceFromString(s_fshGround) &&
+		m_program.link()))
 	{
-		delete m_program;
-		m_program = NULL;
 		LOG_ERROR("Ground : Program link failed!\n");
 		return false;
 	}
 
-	m_program->bind();
-	m_program->sendUniformf(paramGroundSizeName, m_groundSize[0], m_groundSize[1]);
+//	m_program->bind();
+//	m_program->sendUniformf(paramGroundSizeName, m_groundSize[0], m_groundSize[1]);
 
-	m_programMesh = new ProgramObject;
-
-	if(!(m_programMesh->initVertexShaderSourceFromString(s_vshGroundNoTexture) &&
-		m_programMesh->initFragmentShaderSourceFromString(s_fshGroundMesh) &&
-		m_programMesh->link()))
+	if(!(m_programMesh.initVertexShaderSourceFromString(s_vshGroundNoTexture) &&
+		m_programMesh.initFragmentShaderSourceFromString(s_fshGroundMesh) &&
+		m_programMesh.link()))
 	{
-		delete m_programMesh;
-		m_programMesh = NULL;
 		LOG_ERROR("Ground : Program link failed!\n");
 		return false;
 	}
 
 	m_vertAttribLocation = 0;
-	m_program->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
-	m_programMesh->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	m_program.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	m_programMesh.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
 	htCheckGLError("Ground::initPrograms");
 	return true;
 }
 
 bool WYGround::initProgramsNoTexture()
 {
-	clearProgram();
 	clearGroundTexture();
 
-	m_program = new ProgramObject;
-
-	if(!(m_program->initVertexShaderSourceFromString(s_vshGroundNoTexture) &&
-		m_program->initFragmentShaderSourceFromString(s_fshGroundNoTexture) &&
-		m_program->link()))
+	if(!(m_program.initVertexShaderSourceFromString(s_vshGroundNoTexture) &&
+		m_program.initFragmentShaderSourceFromString(s_fshGroundNoTexture) &&
+		m_program.link()))
 	{
-		delete m_program;
-		m_program = NULL;
 		LOG_ERROR("Ground : Program link failed!\n");
 		return false;
 	}
 
-	m_programMesh = new ProgramObject;
-
-	if(!(m_programMesh->initVertexShaderSourceFromString(s_vshGroundNoTexture) &&
-		m_programMesh->initFragmentShaderSourceFromString(s_fshGroundMesh) &&
-		m_programMesh->link()))
+	if(!(m_programMesh.initVertexShaderSourceFromString(s_vshGroundNoTexture) &&
+		m_programMesh.initFragmentShaderSourceFromString(s_fshGroundMesh) &&
+		m_programMesh.link()))
 	{
-		delete m_programMesh;
-		m_programMesh = NULL;
 		LOG_ERROR("Ground : Program link failed!\n");
 		return false;
 	}
 
 	m_vertAttribLocation = 0;
 
-	m_program->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
-	m_programMesh->bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	m_program.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	m_programMesh.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
 	htCheckGLError("Ground::initProgramsNoTexture");
 	return true;
-}
-
-void WYGround::clearProgram()
-{
-	delete m_programMesh;
-	delete m_program;
-	m_programMesh = m_program = NULL;
 }
