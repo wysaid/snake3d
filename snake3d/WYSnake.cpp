@@ -9,9 +9,12 @@
 
 #include "WYSnake.h"
 
+#define SNAKE_TEXTURE_ID GL_TEXTURE2
+#define SNAKE_TEXTURE_INDEX (SNAKE_TEXTURE_ID - GL_TEXTURE0)
+
 #define SNAKE_VERTEX_PER_UNIT 1
 #define SNAKE_RADIUS 0.5f
-#define SNAKE_RADIUS_VERTEX_SIZE 10
+#define SNAKE_RADIUS_VERTEX_SIZE 7
 #define SNAKE_PERIMETER_VERTEX_SIZE (SNAKE_RADIUS_VERTEX_SIZE * 3)
 
 #define SNAKE_DEFAULT_HEIGHT 0.5f
@@ -19,33 +22,31 @@
 
 static const char* const s_vshSnake = SHADER_STRING
 (
-attribute vec3 v3Position;
-uniform mat4 m4MVP;
 varying vec2 v2TexCoord;
-
-// uniform vec2 v3Norm;
-// uniform float fSeq;  //Range: [0, n]
-
-uniform vec4 v4Data; //v3Norm + fSeq.
+attribute vec3 v3Position;
+attribute vec3 v3Norm;
+attribute vec2 v2Relative;
+uniform mat4 m4MVP;
 
 const float PI2 = 3.14159265 * 2.0;
-
+ 
 void main()
 {
-	vec3 turn = normalize(v4Data.xyz);
-	float cosRad = turn.y;
+	vec3 turn = normalize(v3Norm);
+	float cosRad = -turn.y;
 	float sinRad = sqrt(1.0 - cosRad * cosRad);
-	if(v4Data.x < 0.0)
+	if(v3Norm.x < 0.0)
 		sinRad = -sinRad;
 
-	float angle = PI2 * v4Data.w;
+	float angle = PI2 * v2Relative.x;
 	//Points in xOz平面
-	vec3 pos = mat3(cosRad, sinRad, 0.0,
+	vec3 pos = v3Position + mat3(cosRad, sinRad, 0.0,
 		-sinRad, cosRad, 0.0,
-		0.0, 0.0, 1.0) * vec3(cos(angle), 0.0, sin(angle));
+		0.0, 0.0, 1.0) * vec3(cos(angle), 0.0, sin(angle)) * 0.5;
 
-	gl_Position = m4MVP * vec4(v3Position + pos, 1.0);
-	v2TexCoord = (v3Position.xy + 1.0) / 2.0;
+	gl_Position = m4MVP * vec4(pos, 1.0);
+
+	v2TexCoord = vec2(v2Relative.y, angle / PI2);
 }
 );
 
@@ -57,14 +58,15 @@ varying vec2 v2TexCoord;
 
 void main()
 {
-	gl_FragColor = texture2D(skyTexture, v2TexCoord);
+	gl_FragColor = texture2D(snakeTexture, v2TexCoord);
 }
 );
 
 static const char* const s_vshSnakeNoTexture = SHADER_STRING
 (
 attribute vec3 v3Position;
-attribute vec4 v4Data; //v3Norm + fSeq.
+attribute vec3 v3Norm;
+attribute vec2 v2Relative;
 varying vec3 v3Color;
 uniform mat4 m4MVP;
 
@@ -72,13 +74,13 @@ const float PI2 = 3.14159265 * 2.0;
 
 void main()
 {
-	vec3 turn = normalize(v4Data.xyz);
+	vec3 turn = normalize(v3Norm);
 	float cosRad = -turn.y;
 	float sinRad = sqrt(1.0 - cosRad * cosRad);
-	if(v4Data.x < 0.0)
+	if(v3Norm.x < 0.0)
 		sinRad = -sinRad;
 
-	float angle = PI2 * v4Data.w;
+	float angle = PI2 * v2Relative.x;
 	//Points in xOz平面
 	vec3 pos = mat3(cosRad, sinRad, 0.0,
 		-sinRad, cosRad, 0.0,
@@ -101,7 +103,8 @@ void main()
 const char* const WYSnake::paramModelviewMatrixName = "m4MVP";
 const char* const WYSnake::paramVertexPositionName = "v3Position";
 const char* const WYSnake::paramSnakeTextureName = "snakeTexture";
-const char* const WYSnake::paramSnakeDataName = "v4Data";
+const char* const WYSnake::paramSnakeDirName = "v3Norm";
+const char* const WYSnake::paramSnakeRelDataName = "v2Relative";
 
 WYSnake::WYSnake() : m_snakeVBO(0), m_snakeIndexVBO(0), m_vertAttribLocation(0), m_snakeTexture(0)
 {
@@ -114,7 +117,7 @@ WYSnake::~WYSnake()
 	clearSnakeBuffers();
 }
 
-bool WYSnake::init(float x, float y, float len, float xNorm, float yNorm)
+bool WYSnake::init(float x, float y, const char* texName, float len, float xNorm, float yNorm)
 {
 	clearSnakeBuffers();
 	using namespace HTAlgorithm;
@@ -124,10 +127,10 @@ bool WYSnake::init(float x, float y, float len, float xNorm, float yNorm)
 	m_snakeSkeleton.clear();
 	float snakeStride = 1.0f / SNAKE_VERTEX_PER_UNIT;
 	
-	const SnakeBody bd2(5.0, 5.0, 0.0, 0.0, SNAKE_DEFAULT_HEIGHT, SNAKE_DEFAULT_ZNORM);
+	const SnakeBody bd2(2.0, 2.0, 0.0, 0.0, SNAKE_DEFAULT_HEIGHT, SNAKE_DEFAULT_ZNORM);
 	m_snakeSkeleton.push_back(bd2);
 
-	const SnakeBody bd1(3.0, 3.0, 0.0, 0.0, SNAKE_DEFAULT_HEIGHT, SNAKE_DEFAULT_ZNORM);
+	const SnakeBody bd1(1.0, 1.0, 0.0, 0.0, SNAKE_DEFAULT_HEIGHT, SNAKE_DEFAULT_ZNORM);
 	m_snakeSkeleton.push_back(bd1);
 	
 	for(float f = 0.0f; f < len; f += snakeStride)
@@ -139,13 +142,33 @@ bool WYSnake::init(float x, float y, float len, float xNorm, float yNorm)
 	}
 	
 	initSnakeBuffers();
-	return initPrograms();
+	return initPrograms() && initSnakeTexture(texName);
 }
 
 void WYSnake::drawSnake(const HTAlgorithm::Mat4& mvp)
 {
 	GLuint indexSize = genModelBySkeleton();
+	m_program.bind();
+	m_program.sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
+	glActiveTexture(SNAKE_TEXTURE_ID);
+	glBindTexture(GL_TEXTURE_2D, m_snakeTexture);
+	m_program.sendUniformi(paramSnakeTextureName, SNAKE_TEXTURE_INDEX);
 
+	glBindBuffer(GL_ARRAY_BUFFER, m_snakeVBO);
+	glEnableVertexAttribArray(m_vertAttribLocation);
+	glVertexAttribPointer(m_vertAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_snakeDirVBO);
+	glEnableVertexAttribArray(m_dirAttribLocation);
+	glVertexAttribPointer(m_dirAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_snakeRelDataVBO);
+	glEnableVertexAttribArray(m_relDataAttribLocation);
+	glVertexAttribPointer(m_relDataAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_snakeIndexVBO);
+	glDrawElements(GL_TRIANGLES, indexSize, GL_UNSIGNED_SHORT, 0);
+	htCheckGLError("drawSnake");
 }
 
 void WYSnake::drawSnakeWithMesh(const HTAlgorithm::Mat4& mvp)
@@ -158,9 +181,13 @@ void WYSnake::drawSnakeWithMesh(const HTAlgorithm::Mat4& mvp)
 	glEnableVertexAttribArray(m_vertAttribLocation);
 	glVertexAttribPointer(m_vertAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_snakeDataVBO);
-	glEnableVertexAttribArray(m_dataAttribLocation);
-	glVertexAttribPointer(m_dataAttribLocation, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, m_snakeDirVBO);
+	glEnableVertexAttribArray(m_dirAttribLocation);
+	glVertexAttribPointer(m_dirAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_snakeRelDataVBO);
+	glEnableVertexAttribArray(m_relDataAttribLocation);
+	glVertexAttribPointer(m_relDataAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_snakeIndexVBO);
 	glDrawElements(GL_LINE_STRIP, indexSize, GL_UNSIGNED_SHORT, 0);
@@ -173,30 +200,18 @@ void WYSnake::drawSnakeWithMesh(const HTAlgorithm::Mat4& mvp)
 
 GLuint WYSnake::genModelBySkeleton()
 {
-// 	const float lengthStep = 1.0f / SNAKE_VERTEX_PER_UNIT;
-// 	const float radianStep = (M_PI * 2.0f) / SNAKE_PERIMETER_VERTEX_SIZE;
-// 
-// 	std::vector<HTAlgorithm::Vec3f> snakeVertices;
-// 	snakeVertices.resize(m_snakeSkeleton.size() * (SNAKE_PERIMETER_VERTEX_SIZE + 1));
-// 
-// 	int sz = (int)m_snakeSkeleton.size() - 1;
-// 
-// 	for(int i = 0; i < sz; ++i)
-// 	{
-// 		SnakeBody bd1 = m_snakeSkeleton[i];
-// 		SnakeBody bd2 = m_snakeSkeleton[i + 1];
-// 	}
-
 	using namespace HTAlgorithm;
 
 	const float lengthStep = 1.0f / SNAKE_VERTEX_PER_UNIT;
 	const float radianStep = (M_PI * 2.0f) / (SNAKE_PERIMETER_VERTEX_SIZE - 1);
 
 	std::vector<Vec3f> snakeVertices;
-	std::vector<Vec4f> snakeData;
+	std::vector<Vec3f> snakeDir;
+	std::vector<Vec2f> snakeRelData;
 	int snakeDataSize = m_snakeSkeleton.size() * SNAKE_PERIMETER_VERTEX_SIZE;
  	snakeVertices.resize(snakeDataSize);
-	snakeData.resize(snakeDataSize);
+	snakeDir.resize(snakeDataSize);
+	snakeRelData.resize(snakeDataSize);
 
 	const int sz = (int)m_snakeSkeleton.size() - 1;
 	int index = 0;
@@ -205,11 +220,12 @@ GLuint WYSnake::genModelBySkeleton()
 	{
 		const SnakeBody body = m_snakeSkeleton[i];
 		const Vec3f v3Pos(body.pos);
-		const Vec3f v3Norm = m_snakeSkeleton[i - 1].pos - m_snakeSkeleton[i].pos;
+		const Vec3f v3Norm = m_snakeSkeleton[i - 1].pos - m_snakeSkeleton[i + 1].pos;
 		for(int j = 0; j < SNAKE_PERIMETER_VERTEX_SIZE; ++j)
 		{
 			snakeVertices[index] = v3Pos;
-			snakeData[index] = Vec4f(v3Norm[0], v3Norm[1], v3Norm[2], float(j) / (SNAKE_PERIMETER_VERTEX_SIZE - 1));
+			snakeDir[index] = v3Norm;
+			snakeRelData[index] = Vec2f(float(j) / (SNAKE_PERIMETER_VERTEX_SIZE - 1), index);
 			++index;
 		}
 	}
@@ -239,8 +255,11 @@ GLuint WYSnake::genModelBySkeleton()
 	glBindBuffer(GL_ARRAY_BUFFER, m_snakeVBO);
 	glBufferData(GL_ARRAY_BUFFER, snakeVertices.size() * sizeof(snakeVertices[0]), snakeVertices.data(), GL_STREAM_DRAW);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_snakeDataVBO);
-	glBufferData(GL_ARRAY_BUFFER, snakeData.size() * sizeof(snakeData[0]), snakeData.data(), GL_STREAM_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, m_snakeDirVBO);
+	glBufferData(GL_ARRAY_BUFFER, snakeDir.size() * sizeof(snakeDir[0]), snakeDir.data(), GL_STREAM_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_snakeRelDataVBO);
+	glBufferData(GL_ARRAY_BUFFER, snakeRelData.size() * sizeof(snakeRelData[0]), snakeRelData.data(), GL_STREAM_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_snakeIndexVBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshIndexes.size() * sizeof(meshIndexes[0]), meshIndexes.data(), GL_STREAM_DRAW);
@@ -288,13 +307,13 @@ void WYSnake::clearSnakeTexture()
 
 bool WYSnake::initPrograms()
 {
-// 	if(!(m_program.initVertexShaderSourceFromString(s_vshSnake) &&
-// 		m_program.initFragmentShaderSourceFromString(s_fshSnake) &&
-// 		m_program.link()))
-// 	{
-// 		LOG_ERROR("WYSnake : Program link failed!\n");
-// 		return false;
-// 	}
+	if(!(m_program.initVertexShaderSourceFromString(s_vshSnake) &&
+		m_program.initFragmentShaderSourceFromString(s_fshSnake) &&
+		m_program.link()))
+	{
+		LOG_ERROR("WYSnake : Program link failed!\n");
+		return false;
+	}
 
 	if(!(m_programMesh.initVertexShaderSourceFromString(s_vshSnakeNoTexture) &&
 		m_programMesh.initFragmentShaderSourceFromString(s_fshSnakeNotexture) &&
@@ -305,12 +324,19 @@ bool WYSnake::initPrograms()
 	}
 
 	m_vertAttribLocation = 0;
-	m_dataAttribLocation = 1;
-//	m_program.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
-//	m_program.bindAttributeLocation(paramSnakeDataName, m_dataAttribLocation);
+	m_dirAttribLocation = 1;
+	m_relDataAttribLocation = 2;
 
+	m_program.bind();
+	m_program.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	m_program.bindAttributeLocation(paramSnakeDirName, m_dirAttribLocation);
+	m_program.bindAttributeLocation(paramSnakeRelDataName, m_relDataAttribLocation);
+
+
+	m_programMesh.bind();
 	m_programMesh.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);	
-	m_programMesh.bindAttributeLocation(paramSnakeDataName, m_dataAttribLocation);
+	m_programMesh.bindAttributeLocation(paramSnakeDirName, m_dirAttribLocation);
+	m_programMesh.bindAttributeLocation(paramSnakeRelDataName, m_relDataAttribLocation);
 
 	htCheckGLError("WYSnake::initPrograms");
 	return true;
@@ -321,13 +347,15 @@ void WYSnake::initSnakeBuffers()
 	clearSnakeBuffers();
 	glGenBuffers(1, &m_snakeVBO);
 	glGenBuffers(1, &m_snakeIndexVBO);
-	glGenBuffers(1, &m_snakeDataVBO);
+	glGenBuffers(1, &m_snakeDirVBO);
+	glGenBuffers(1, &m_snakeRelDataVBO);
 }
 
 void WYSnake::clearSnakeBuffers()
 {
 	glDeleteBuffers(1, &m_snakeVBO);
 	glDeleteBuffers(1, &m_snakeIndexVBO);
-	glDeleteBuffers(1, &m_snakeDataVBO);
-	m_snakeVBO = m_snakeDataVBO = m_snakeIndexVBO = 0;
+	glDeleteBuffers(1, &m_snakeDirVBO);
+	glDeleteBuffers(1, &m_snakeRelDataVBO);
+	m_snakeVBO = m_snakeDirVBO = m_snakeRelDataVBO = m_snakeIndexVBO = 0;
 }

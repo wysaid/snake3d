@@ -48,6 +48,8 @@ namespace Snake3D
 	const char* const g_stage1GroundTextureName = ":/Snake3D/res/ground1.jpg";
 
 
+	const char* const g_stage1SnakeTextureName = ":/Snake3D/res/ground2.jpg";
+
 };
 
 #endif

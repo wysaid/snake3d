@@ -33,7 +33,7 @@ public:
 	//x, y表示蛇头位置
 	//len表示蛇身长度
 	//xNorm与yNorm表示蛇身与蛇头初始状态下的朝向（初始状态下没有弯曲）
-	bool init(float x, float y, float len = 3.0f, float xNorm = 0.0f, float yNorm = 1.0f);	
+	bool init(float x, float y, const char* texName, float len = 3.0f, float xNorm = 0.0f, float yNorm = 1.0f);	
 
 	void drawSnake(const HTAlgorithm::Mat4& mvp);
 	void drawSnakeWithMesh(const HTAlgorithm::Mat4& mvp);
@@ -46,7 +46,8 @@ protected:
 	static const char* const paramModelviewMatrixName;
 	static const char* const paramVertexPositionName;
 	static const char* const paramSnakeTextureName;
-	static const char* const paramSnakeDataName;
+	static const char* const paramSnakeDirName;
+	static const char* const paramSnakeRelDataName;
 
 	bool initSnakeTexture(const char* texName);
 	void clearSnakeTexture();
@@ -57,11 +58,11 @@ protected:
 //	GLuint genFacesBySkeleton();
 
 protected:
-	GLuint m_snakeVBO, m_snakeDataVBO, m_snakeIndexVBO;
+	GLuint m_snakeVBO, m_snakeDirVBO, m_snakeRelDataVBO, m_snakeIndexVBO;
 	GLuint m_snakeVertIndexSize;
 	std::vector<SnakeBody> m_snakeSkeleton;
 	ProgramObject m_program, m_programMesh;
-	GLuint m_vertAttribLocation, m_dataAttribLocation;
+	GLuint m_vertAttribLocation, m_dirAttribLocation, m_relDataAttribLocation;
 	GLuint m_snakeTexture;
 };
 
