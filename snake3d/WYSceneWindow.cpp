@@ -72,12 +72,13 @@ void WYSceneWindow::paintGL()
 	HTAlgorithm::Mat4 qmat = m_m4Projection * m_m4ModelView;
 	
 	m_sky->drawSky(qmat);
+//	m_sky->drawSkyWithMesh(qmat);
 
-	m_sky->drawSkyWithMesh(qmat);
 	glEnable(GL_DEPTH_TEST);
 	m_ground->drawGround(qmat);
+	m_snake->drawSnakeWithMesh(qmat);
 	glDisable(GL_DEPTH_TEST);
-	m_ground->drawGroundWithMesh(qmat);
+//	m_ground->drawGroundWithMesh(qmat);
 
 	htCheckGLError("WYSceneWindow::paintGL");
 	swapBuffers();
@@ -103,6 +104,12 @@ void WYSceneWindow::initializeGL()
 	if(!m_sky->initSky(g_skyTextureName))
 	{
 		LOG_ERROR("Init Sky Failed\n!");
+	}
+
+	m_snake = new WYSnake;
+	if(!m_snake->init(0.0f, 0.0f, 10.0f))
+	{
+		LOG_ERROR("Init snake Failed!\n");
 	}
 
 	QTimer *timer = new QTimer(this);

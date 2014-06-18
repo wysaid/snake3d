@@ -13,26 +13,26 @@
 #define SKY_TEXTURE_INDEX (SKY_TEXTURE_ID - GL_TEXTURE0)
 
 #define SKY_RADIUS 10.0f
-#define SKY_RADIUS_VERTEX_SIZE 10
-#define SKY_PERIMETER_VERTEX_SIZE (SKY_RADIUS_VERTEX_SIZE * 3)
+#define SKY_RADIUS_VERTEX_SIZE 15
+#define SKY_PERIMETER_CLIP_SIZE (SKY_RADIUS_VERTEX_SIZE * 3)
 
 static const char* const s_vshSkyNoTexture = SHADER_STRING
 (
-attribute vec4 v4Position;
+attribute vec3 v3Position;
 uniform mat4 m4MVP;
 varying vec3 v3Color;
 
 void main()
 {
-	v3Color = v4Position.xyz;
-	gl_Position = m4MVP * v4Position;
+	v3Color = v3Position;
+	gl_Position = m4MVP * vec4(v3Position, 1.0);
 }
 );
 
 
 static const char* const s_vshSky = SHADER_STRING
 (
-attribute vec4 v4Position;
+attribute vec3 v3Position;
 uniform mat4 m4MVP;
 varying vec2 v2TexCoord;
 
@@ -41,8 +41,8 @@ const float skyRadius = 10.0;
 void main()
 {
 
-	gl_Position = m4MVP * v4Position;
-	v2TexCoord = (v4Position.xy / skyRadius + 1.0) / 2.0;
+	gl_Position = m4MVP * vec4(v3Position, 1.0);
+	v2TexCoord = (v3Position.xy / skyRadius + 1.0) / 2.0;
 }
 );
 
@@ -68,7 +68,7 @@ void main()
 );
 
 const char* const WYSky::paramModelviewMatrixName = "m4MVP";
-const char* const WYSky::paramVertexPositionName = "v4Position";
+const char* const WYSky::paramVertexPositionName = "v3Position";
 const char* const WYSky::paramSkyTextureName = "skyTexture";
 
 WYSky::WYSky() : m_skyVBO(0), m_skyIndexVBO(0), m_skyTexture(0)
@@ -87,16 +87,16 @@ bool WYSky::initSky(const char* texName)
 	clearSkyBuffers();
 
 	const float radiusStep = SKY_RADIUS / SKY_RADIUS_VERTEX_SIZE;
-	const float radianStep = (M_PI * 2.0f) / SKY_PERIMETER_VERTEX_SIZE;
+	const float radianStep = (M_PI * 2.0f) / SKY_PERIMETER_CLIP_SIZE;
 
 	std::vector<HTAlgorithm::Vec3f> skyVertices;
-	skyVertices.resize(SKY_RADIUS_VERTEX_SIZE * (SKY_PERIMETER_VERTEX_SIZE + 1) + 1);
+	skyVertices.resize(SKY_RADIUS_VERTEX_SIZE * (SKY_PERIMETER_CLIP_SIZE + 1) + 1);
 	int index = 0;
 	for(int i = 0; i < SKY_RADIUS_VERTEX_SIZE; ++i)
 	{
 		const float z = i * radiusStep;
 		const float dis = sqrtf(SKY_RADIUS*SKY_RADIUS - z*z);
-		for(int j = 0; j <= SKY_PERIMETER_VERTEX_SIZE; ++j)
+		for(int j = 0; j <= SKY_PERIMETER_CLIP_SIZE; ++j)
 		{
 			const float rad = radianStep * j;
 			skyVertices[index++] = HTAlgorithm::Vec3f(cosf(rad) * dis, sinf(rad) * dis, z);
@@ -110,15 +110,15 @@ bool WYSky::initSky(const char* texName)
 
 	index = 0;
 	std::vector<unsigned short> meshIndexes;
-	m_vertexIndexSize = SKY_RADIUS_VERTEX_SIZE * SKY_PERIMETER_VERTEX_SIZE * 6;
+	m_vertexIndexSize = SKY_RADIUS_VERTEX_SIZE * SKY_PERIMETER_CLIP_SIZE * 6;
 	meshIndexes.resize(m_vertexIndexSize);
 
 	for(int i = 0; i < SKY_RADIUS_VERTEX_SIZE - 1; ++i)
 	{
-		const int pos1 = i * (SKY_PERIMETER_VERTEX_SIZE + 1);
-		const int pos2 = (i + 1) * (SKY_PERIMETER_VERTEX_SIZE + 1);
+		const int pos1 = i * (SKY_PERIMETER_CLIP_SIZE + 1);
+		const int pos2 = (i + 1) * (SKY_PERIMETER_CLIP_SIZE + 1);
 
-		for(int j = 0; j < SKY_PERIMETER_VERTEX_SIZE; ++j)
+		for(int j = 0; j < SKY_PERIMETER_CLIP_SIZE; ++j)
 		{
 			meshIndexes[index] = pos1 + j;
 			meshIndexes[index + 1] = pos1 + j + 1;
@@ -130,10 +130,10 @@ bool WYSky::initSky(const char* texName)
 		}
 	}
 
-	const int pos1 = (SKY_RADIUS_VERTEX_SIZE - 1) * (SKY_PERIMETER_VERTEX_SIZE + 1);
+	const int pos1 = (SKY_RADIUS_VERTEX_SIZE - 1) * (SKY_PERIMETER_CLIP_SIZE + 1);
 	const int pos2 = skyVertices.size() - 1;
 
-	for(int j = 0; j < SKY_PERIMETER_VERTEX_SIZE; ++j)
+	for(int j = 0; j < SKY_PERIMETER_CLIP_SIZE; ++j)
 	{
 		meshIndexes[index] = pos1 + j;
 		meshIndexes[index + 1] = pos1 + j + 1;
@@ -173,7 +173,7 @@ void WYSky::drawSky(const HTAlgorithm::Mat4& mvp)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_skyIndexVBO);
 
 	glDrawElements(GL_TRIANGLES, m_vertexIndexSize, GL_UNSIGNED_SHORT, 0);
-	htCheckGLError("drawGround");
+	htCheckGLError("drawSky");
 
 }
 
@@ -189,7 +189,7 @@ void WYSky::drawSkyWithMesh(const HTAlgorithm::Mat4& mvp)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_skyIndexVBO);
 
 	glDrawElements(GL_LINE_STRIP, m_vertexIndexSize, GL_UNSIGNED_SHORT, 0);
-	htCheckGLError("drawGroundWithMesh");
+	htCheckGLError("drawSkyWithMesh");
 }
 
 bool WYSky::initSkyTexture(const char* texName)

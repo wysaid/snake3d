@@ -13,19 +13,19 @@
 
 static const char* const s_vshGroundNoTexture = SHADER_STRING
 (
-attribute vec4 v4Position;
+attribute vec3 v3Position;
 uniform mat4 m4MVP;
 
 void main()
 {
 
-	gl_Position = m4MVP * v4Position;
+	gl_Position = m4MVP * vec4(v3Position, 1.0);
 }
 );
 
 static const char* const s_vshGround = SHADER_STRING
 (
-attribute vec4 v4Position;
+attribute vec3 v3Position;
 uniform mat4 m4MVP;
 varying vec2 v2TexCoord;
 //uniform vec2 v2GroundSize;
@@ -34,9 +34,9 @@ varying float fHeight;
 void main()
 {
 
-	gl_Position = m4MVP * v4Position;
-	v2TexCoord = (v4Position.xy + 1.0) / 2.0;// / v2GroundSize;
-	fHeight = v4Position.z * 5.0;
+	gl_Position = m4MVP * vec4(v3Position, 1.0);
+	v2TexCoord = (v3Position.xy + 1.0) / 2.0;// / v2GroundSize;
+	fHeight = v3Position.z * 5.0;
 }
 );
 
@@ -66,13 +66,13 @@ static const char* const s_fshGroundMesh = SHADER_STRING_PRECISION_L
 (
 void main()
 {
-	gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+	gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
 }
 );
 
 
 const char* const WYGround::paramModelviewMatrixName = "m4MVP";
-const char* const WYGround::paramVertexPositionName = "v4Position";
+const char* const WYGround::paramVertexPositionName = "v3Position";
 const char* const WYGround::paramGroundTextureName = "groundTexture";
 //const char* const WYGround::paramGroundSizeName = "v2GroundSize";
 

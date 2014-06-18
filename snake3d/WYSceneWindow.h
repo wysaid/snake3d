@@ -21,6 +21,7 @@
 #include "WYStages.h"
 #include "WYGround.h"
 #include "WYSky.h"
+#include "WYSnake.h"
 
 using namespace Snake3D;
 
@@ -74,6 +75,7 @@ private:
 private:
 	WYGround* m_ground;
 	WYSky* m_sky;
+	WYSnake* m_snake;
 	int m_lastX, m_lastY;
 	float m_farAway, m_headUp;
 	float m_fovyRad;
