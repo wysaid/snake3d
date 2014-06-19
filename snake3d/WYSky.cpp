@@ -22,13 +22,23 @@ attribute vec3 v3Position;
 uniform mat4 m4MVP;
 varying vec3 v3Color;
 
+const float skyRadius = 10.0;
+
 void main()
 {
-	v3Color = v3Position;
+	v3Color = v3Position / skyRadius;
 	gl_Position = m4MVP * vec4(v3Position, 1.0);
 }
 );
 
+static const char* const s_fshSkyNoTexture = SHADER_STRING_PRECISION_M
+(
+varying vec3 v3Color;
+void main()
+{
+	gl_FragColor = vec4(v3Color.yyy, 1.0);//vec4(1.0, v3Color.xy, 1.0);
+}
+);
 
 static const char* const s_vshSky = SHADER_STRING
 (
@@ -43,15 +53,6 @@ void main()
 
 	gl_Position = m4MVP * vec4(v3Position, 1.0);
 	v2TexCoord = (v3Position.xy / skyRadius + 1.0) / 2.0;
-}
-);
-
-static const char* const s_fshSkyNoTexture = SHADER_STRING_PRECISION_M
-(
-varying vec3 v3Color;
-void main()
-{
-	gl_FragColor = vec4(1.0, v3Color.xy, 1.0);
 }
 );
 

@@ -21,7 +21,7 @@ struct SnakeBody
 	SnakeBody(float fx, float fdx, float fy, float fdy, float fz = 0.0f, float fdz = 0.0f) : pos(fx, fy, fz), dPos(fdx, fdy, fdz) {}
 	SnakeBody(HTAlgorithm::Vec3f fPos, HTAlgorithm::Vec3f fdPos) : pos(fPos), dPos(fdPos) {}
 	HTAlgorithm::Vec3f pos;
-	HTAlgorithm::Vec3f dPos;
+	HTAlgorithm::Vec3f dPos; //dPos 必须标准化!
 };
 
 class WYSnake

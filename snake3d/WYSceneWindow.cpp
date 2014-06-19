@@ -39,7 +39,7 @@ void main()
 }
 );
 
-WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f), m_fovyRad(M_PI / 3.0f), m_sky(NULL),m_zHeight(1.5f)
+WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_ground(NULL), m_bIsMouseDown(false), m_lastX(0), m_lastY(0), m_farAway(100.0f), m_headUp(0.0f), m_fovyRad(M_PI / 3.0f), m_sky(NULL),m_zHeight(1.5f), m_bDrawWithMesh(false)
 {
 	if(g_sceneWindow != NULL)
 	{
@@ -71,16 +71,25 @@ void WYSceneWindow::paintGL()
 	
 	HTAlgorithm::Mat4 qmat = m_m4Projection * m_m4ModelView;
 	
-//	m_sky->drawSky(qmat);
-//	m_sky->drawSkyWithMesh(qmat);
+	if(m_bDrawWithMesh)
+	{
+		m_sky->drawSkyWithMesh(qmat);
+		glEnable(GL_DEPTH_TEST);
+		m_ground->drawGround(qmat);
+		glDisable(GL_DEPTH_TEST);
+		m_ground->drawGroundWithMesh(qmat);
+		m_snake->drawSnakeWithMesh(qmat);
+	}
+	else
+	{
+		m_sky->drawSky(qmat);
 
-	glEnable(GL_DEPTH_TEST);
-//	m_ground->drawGround(qmat);
-	m_snake->drawSnake(qmat);
-	glDisable(GL_DEPTH_TEST);
-//	m_ground->drawGroundWithMesh(qmat);
-	m_snake->drawSnakeWithMesh(qmat);
-
+		glEnable(GL_DEPTH_TEST);
+		m_ground->drawGround(qmat);
+		m_snake->drawSnake(qmat);
+		glDisable(GL_DEPTH_TEST);
+	}
+	
 	htCheckGLError("WYSceneWindow::paintGL");
 	swapBuffers();
 }
@@ -119,6 +128,9 @@ void WYSceneWindow::initializeGL()
 
 	glEnable(GL_DEPTH_TEST);
 	
+// 	glEnable(GL_BLEND);
+// 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
 	htCheckGLError("SceneWindow::initializeGL");
 }
 
@@ -153,8 +165,8 @@ void WYSceneWindow::mouseMoveEvent(QMouseEvent *e)
 
 	m_headUp += (e->y() - m_lastY);// * 100.0f;
 
-	if(m_headUp < -m_farAway / 2.0f)
-		m_headUp = -m_farAway / 2.0f;
+	if(m_headUp < -m_farAway)
+		m_headUp = -m_farAway;
 	else if(m_headUp > m_farAway*2.0f)
 		m_headUp = m_farAway*2.0f;
 
@@ -194,6 +206,12 @@ void WYSceneWindow::keyPressEvent(QKeyEvent *e)
 		break;
 	case Qt::Key_K:
 		m_zHeight += motion;
+		break;
+	case Qt::Key_Space:
+		m_bDrawWithMesh = !m_bDrawWithMesh;
+		break;
+	case Qt::Key_Enter: case Qt::Key_Return:
+		m_snake->move(motion);
 		break;
 	default:
 		return;

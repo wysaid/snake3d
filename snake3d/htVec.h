@@ -20,10 +20,10 @@ namespace HTAlgorithm
 {
 	//Only for class Vec.
 	template<typename V, int DIM>
-	struct VecAgorithmHelp;  //Check your code, when this is called.
+	struct VecAlgorithmHelp;  //Check your code, when this is called.
 
 	template<typename V>
-	struct VecAgorithmHelp<V, 1>
+	struct VecAlgorithmHelp<V, 1>
 	{
 		static inline V _plus(const V& v1, const V& v2)
 		{
@@ -33,6 +33,11 @@ namespace HTAlgorithm
 		static inline V _minus(const V& v1, const V& v2)
 		{
 			return V(v1[0] - v2[0]);
+		}
+
+		static inline V _oposite(const V& v)
+		{
+			return V(-v[0]);
 		}
 
 		static inline V _times(const V& v1, const V& v2)
@@ -158,7 +163,7 @@ namespace HTAlgorithm
 	//////////////////////////////////////////////////////////////////////////
 
 	template<typename V>
-	struct VecAgorithmHelp<V, 2>
+	struct VecAlgorithmHelp<V, 2>
 	{
 		static inline V _plus(const V& v1, const V& v2)
 		{
@@ -168,6 +173,11 @@ namespace HTAlgorithm
 		static inline V _minus(const V& v1, const V& v2)
 		{
 			return V(v1[0] - v2[0], v1[1] - v2[1]);
+		}
+
+		static inline V _oposite(const V& v)
+		{
+			return V(-v[0], -v[1]);
 		}
 
 		static inline V _times(const V& v1, const V& v2)
@@ -305,7 +315,7 @@ namespace HTAlgorithm
 	//////////////////////////////////////////////////////////////////////////
 
 	template<typename V>
-	struct VecAgorithmHelp<V, 3>
+	struct VecAlgorithmHelp<V, 3>
 	{
 		static inline V _plus(const V& v1, const V& v2)
 		{
@@ -316,6 +326,11 @@ namespace HTAlgorithm
 		{
 			return V(v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]);
 		}
+		static inline V _oposite(const V& v)
+		{
+			return V(-v[0], -v[1], -v[2]);
+		}
+
 
 		static inline V _times(const V& v1, const V& v2)
 		{
@@ -464,7 +479,7 @@ namespace HTAlgorithm
 	//////////////////////////////////////////////////////////////////////////
 
 	template<typename V>
-	struct VecAgorithmHelp<V, 4>
+	struct VecAlgorithmHelp<V, 4>
 	{
 		static inline V _plus(const V& v1, const V& v2)
 		{
@@ -474,6 +489,11 @@ namespace HTAlgorithm
 		static inline V _minus(const V& v1, const V& v2)
 		{
 			return V(v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2], v1[3] - v2[3]);
+		}
+
+		static inline V _oposite(const V& v)
+		{
+			return V(-v[0], -v[1], -v[2], -v[3]);
 		}
 
 		static inline V _times(const V& v1, const V& v2)
@@ -646,7 +666,7 @@ namespace HTAlgorithm
 		typedef Type VecDataType;
 
 		Vec() { htStaticAssert(DIM > 0 && DIM <= 4);}
-		Vec(const Vec& v) { VecAgorithmHelp<Vec<Type, DIM>, DIM>::_assign(*this, v); }
+		Vec(const Vec& v) { VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_assign(*this, v); }
 		Vec(Type x)
 		{
 			htStaticAssert(DIM == 1); //DIM should be 1
@@ -688,12 +708,12 @@ namespace HTAlgorithm
 
 		inline Vec operator+(const Vec& v)const
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_plus(*this, v);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_plus(*this, v);
 		}
 
 		inline Vec operator+(Type t) const
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_plus(*this, t);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_plus(*this, t);
 		}
 
 		inline friend Vec operator+(Type t, Vec& v)
@@ -703,107 +723,112 @@ namespace HTAlgorithm
 
 		inline Vec& operator+=(const Vec& v)
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_inc(*this, v);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_inc(*this, v);
 		}
 
 		inline Vec& operator+=(Type t)
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_inc(*this, t);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_inc(*this, t);
 		}
 
 		inline Vec operator-(const Vec& v)const
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_minus(*this, v);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_minus(*this, v);
 		}
 
 		inline Vec operator-(Type t)const
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_minus(*this, t);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_minus(*this, t);
+		}
+
+		inline Vec operator-()const
+		{
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_oposite(*this);
 		}
 
 		inline Vec& operator-=(const Vec& v)
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_sub(*this, v);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_sub(*this, v);
 		}
 
 		inline Vec& operator-=(Type t)
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_sub(*this, t);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_sub(*this, t);
 		}
 
 		inline Vec operator*(const Vec& v)const
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_times(*this, v);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_times(*this, v);
 		}
 
 		inline Vec operator*(Type t)const
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_times(*this, t);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_times(*this, t);
 		}
 
 		inline Vec& operator*=(const Vec& v)
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_mul(*this, v);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_mul(*this, v);
 		}
 
 		inline Vec& operator*=(Type t)
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_mul(*this, t);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_mul(*this, t);
 		}
 
 		inline Vec operator/(const Vec& v)const
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_divide(*this, v);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_divide(*this, v);
 		}
 
 		inline Vec operator/(Type t)const
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_divide(*this, t);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_divide(*this, t);
 		}
 
 		inline Vec& operator/=(const Vec& v)
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_div(*this, v);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_div(*this, v);
 		}
 
 		inline Vec& operator/=(Type t)
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_div(*this, t);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_div(*this, t);
 		}
 
 		inline Vec& operator=(const Vec& v)
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_assign(*this, v);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_assign(*this, v);
 		}
 
 		inline Vec& operator=(Type t)
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_assign(*this, t);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_assign(*this, t);
 		}
 
 		inline Type dot(const Vec& v) const
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_dot(*this, v);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_dot(*this, v);
 		}
 
 		inline Type dot() const
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_dot(*this);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_dot(*this);
 		}
 
 		inline Type length() const
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_len(*this);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_len(*this);
 		}
 
 		inline const Vec& normalize()
 		{
-			return VecAgorithmHelp<Vec<Type, DIM>, DIM>::_norm(*this);
+			return VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_norm(*this);
 		}
 
 		inline void clamp(Type low, Type high)
 		{
-			VecAgorithmHelp<Vec<Type, DIM>, DIM>::_clamp(*this, low, high);
+			VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_clamp(*this, low, high);
 		}
 
 		inline Type& x() { htStaticAssert(DIM >= 1); return m_data[0]; }

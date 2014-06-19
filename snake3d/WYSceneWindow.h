@@ -81,6 +81,7 @@ private:
 	float m_fovyRad;
 	float m_zHeight;
 	bool m_bIsMouseDown;
+	bool m_bDrawWithMesh;
 
 };
 

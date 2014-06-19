@@ -12,9 +12,9 @@
 #define SNAKE_TEXTURE_ID GL_TEXTURE2
 #define SNAKE_TEXTURE_INDEX (SNAKE_TEXTURE_ID - GL_TEXTURE0)
 
-#define SNAKE_VERTEX_PER_UNIT 1
+#define SNAKE_VERTEX_PER_UNIT 2
 #define SNAKE_RADIUS 0.5f
-#define SNAKE_RADIUS_VERTEX_SIZE 7
+#define SNAKE_RADIUS_VERTEX_SIZE 10
 #define SNAKE_PERIMETER_VERTEX_SIZE (SNAKE_RADIUS_VERTEX_SIZE * 3)
 
 #define SNAKE_DEFAULT_HEIGHT 0.5f
@@ -127,11 +127,11 @@ bool WYSnake::init(float x, float y, const char* texName, float len, float xNorm
 	m_snakeSkeleton.clear();
 	float snakeStride = 1.0f / SNAKE_VERTEX_PER_UNIT;
 	
-	const SnakeBody bd2(2.0, 2.0, 0.0, 0.0, SNAKE_DEFAULT_HEIGHT, SNAKE_DEFAULT_ZNORM);
-	m_snakeSkeleton.push_back(bd2);
-
-	const SnakeBody bd1(1.0, 1.0, 0.0, 0.0, SNAKE_DEFAULT_HEIGHT, SNAKE_DEFAULT_ZNORM);
-	m_snakeSkeleton.push_back(bd1);
+// 	const SnakeBody bd2(2.0, 2.0, 0.0, 0.0, SNAKE_DEFAULT_HEIGHT, SNAKE_DEFAULT_ZNORM);
+// 	m_snakeSkeleton.push_back(bd2);
+// 
+// 	const SnakeBody bd1(1.0, 1.0, 0.0, 0.0, SNAKE_DEFAULT_HEIGHT, SNAKE_DEFAULT_ZNORM);
+// 	m_snakeSkeleton.push_back(bd1);
 	
 	for(float f = 0.0f; f < len; f += snakeStride)
 	{
@@ -225,7 +225,7 @@ GLuint WYSnake::genModelBySkeleton()
 		{
 			snakeVertices[index] = v3Pos;
 			snakeDir[index] = v3Norm;
-			snakeRelData[index] = Vec2f(float(j) / (SNAKE_PERIMETER_VERTEX_SIZE - 1), index);
+			snakeRelData[index] = Vec2f(float(j) / (SNAKE_PERIMETER_VERTEX_SIZE - 1), i / float(SNAKE_VERTEX_PER_UNIT));
 			++index;
 		}
 	}
@@ -270,6 +270,39 @@ GLuint WYSnake::genModelBySkeleton()
 
 void WYSnake::move(float motion)
 {
+	using namespace HTAlgorithm;
+	if(m_snakeSkeleton.empty())
+	{
+		LOG_ERROR("WYSnake::move Invalid Snake!\n");
+		return;
+	}
+
+	std::vector<SnakeBody>::iterator iter = m_snakeSkeleton.begin();
+	std::vector<SnakeBody>::iterator iterEnd = m_snakeSkeleton.end() - 1;
+	iter->pos += iter->dPos * motion;
+
+	while(++iter < iterEnd)
+	{
+		const SnakeBody& prev = *(iter - 1);
+		const SnakeBody& next = *(iter + 1);
+		SnakeBody& now = *iter;
+		Vec3f norm1 = prev.pos - now.pos;
+		Vec3f norm2 = now.pos - next.pos;
+		if(norm1.dot(norm2) < 0.0f)
+		{
+			now.dPos = norm1.normalize();
+			now.pos += now.dPos * motion;
+		}
+		else
+		{
+			now.pos += now.dPos * motion;
+		}
+	}
+	
+	if(m_snakeSkeleton.size() > 1)
+	{
+		iterEnd->pos += ((iterEnd-1)->pos - iterEnd->pos).normalize() * motion;
+	}
 
 }
 
