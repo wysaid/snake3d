@@ -351,28 +351,32 @@ void WYGround::clearGroundTexture()
 
 bool WYGround::initPrograms()
 {
-	if(!(m_program.initVertexShaderSourceFromString(s_vshGround) &&
-		m_program.initFragmentShaderSourceFromString(s_fshGround) &&
-		m_program.link()))
-	{
-		LOG_ERROR("Ground : Program link failed!\n");
-		return false;
-	}
-
-//	m_program->bind();
-//	m_program->sendUniformf(paramGroundSizeName, m_groundSize[0], m_groundSize[1]);
-
-	if(!(m_programMesh.initVertexShaderSourceFromString(s_vshGroundNoTexture) &&
-		m_programMesh.initFragmentShaderSourceFromString(s_fshGroundMesh) &&
-		m_programMesh.link()))
-	{
-		LOG_ERROR("Ground : Program link failed!\n");
-		return false;
-	}
-
 	m_vertAttribLocation = 0;
-	m_program.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
-	m_programMesh.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+
+	if(m_program.initVertexShaderSourceFromString(s_vshGround) &&
+		m_program.initFragmentShaderSourceFromString(s_fshGround))
+	{
+		m_program.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	}
+
+	if(!m_program.link())
+	{
+		LOG_ERROR("Ground : Program link failed!\n");
+		return false;
+	}
+
+	if(m_programMesh.initVertexShaderSourceFromString(s_vshGroundNoTexture) &&
+		m_programMesh.initFragmentShaderSourceFromString(s_fshGroundMesh))
+	{
+		m_programMesh.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	}
+
+	if(!m_programMesh.link())
+	{
+		LOG_ERROR("Ground : Program link failed!\n");
+		return false;
+	}
+	
 	htCheckGLError("Ground::initPrograms");
 	return true;
 }

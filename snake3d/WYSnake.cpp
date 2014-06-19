@@ -106,7 +106,7 @@ const char* const WYSnake::paramSnakeTextureName = "snakeTexture";
 const char* const WYSnake::paramSnakeDirName = "v3Norm";
 const char* const WYSnake::paramSnakeRelDataName = "v2Relative";
 
-WYSnake::WYSnake() : m_snakeVBO(0), m_snakeIndexVBO(0), m_vertAttribLocation(0), m_snakeTexture(0)
+WYSnake::WYSnake() : m_snakeVBO(0), m_snakeIndexVBO(0), m_snakeDirVBO(0), m_snakeRelDataVBO(0), m_vertAttribLocation(0), m_snakeTexture(0)
 {
 
 }
@@ -307,36 +307,37 @@ void WYSnake::clearSnakeTexture()
 
 bool WYSnake::initPrograms()
 {
-	if(!(m_program.initVertexShaderSourceFromString(s_vshSnake) &&
-		m_program.initFragmentShaderSourceFromString(s_fshSnake) &&
-		m_program.link()))
-	{
-		LOG_ERROR("WYSnake : Program link failed!\n");
-		return false;
-	}
-
-	if(!(m_programMesh.initVertexShaderSourceFromString(s_vshSnakeNoTexture) &&
-		m_programMesh.initFragmentShaderSourceFromString(s_fshSnakeNotexture) &&
-		m_programMesh.link()))
-	{
-		LOG_ERROR("WYSnake : Program link failed!\n");
-		return false;
-	}
-
 	m_vertAttribLocation = 0;
 	m_dirAttribLocation = 1;
 	m_relDataAttribLocation = 2;
 
-	m_program.bind();
-	m_program.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
-	m_program.bindAttributeLocation(paramSnakeDirName, m_dirAttribLocation);
-	m_program.bindAttributeLocation(paramSnakeRelDataName, m_relDataAttribLocation);
+	if(m_program.initVertexShaderSourceFromString(s_vshSnake) &&
+		m_program.initFragmentShaderSourceFromString(s_fshSnake))
+	{
+		m_program.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+		m_program.bindAttributeLocation(paramSnakeDirName, m_dirAttribLocation);
+		m_program.bindAttributeLocation(paramSnakeRelDataName, m_relDataAttribLocation);
+	}
 
+	if(!m_program.link())
+	{
+		LOG_ERROR("WYSnake : Program link failed!\n");
+		return false;
+	}
 
-	m_programMesh.bind();
-	m_programMesh.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);	
-	m_programMesh.bindAttributeLocation(paramSnakeDirName, m_dirAttribLocation);
-	m_programMesh.bindAttributeLocation(paramSnakeRelDataName, m_relDataAttribLocation);
+	if(m_programMesh.initVertexShaderSourceFromString(s_vshSnakeNoTexture) &&
+		m_programMesh.initFragmentShaderSourceFromString(s_fshSnakeNotexture))
+	{
+		m_programMesh.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);	
+		m_programMesh.bindAttributeLocation(paramSnakeDirName, m_dirAttribLocation);
+		m_programMesh.bindAttributeLocation(paramSnakeRelDataName, m_relDataAttribLocation);
+	}
+
+	if(!m_programMesh.link())
+	{
+		LOG_ERROR("WYSnake : Program link failed!\n");
+		return false;
+	}	
 
 	htCheckGLError("WYSnake::initPrograms");
 	return true;

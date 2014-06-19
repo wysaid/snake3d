@@ -223,6 +223,14 @@ void WYSky::clearSkyBuffers()
 
 bool WYSky::initPrograms()
 {
+	m_vertAttribLocation = 0;
+
+	if(m_program.initVertexShaderSourceFromString(s_vshSky) &&
+		m_program.initFragmentShaderSourceFromString(s_fshSky))
+	{
+		m_program.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	}
+
 
 	if(!(m_program.initVertexShaderSourceFromString(s_vshSky) &&
 		m_program.initFragmentShaderSourceFromString(s_fshSky) &&
@@ -232,17 +240,18 @@ bool WYSky::initPrograms()
 		return false;
 	}
 
-	if(!(m_programMesh.initVertexShaderSourceFromString(s_vshSkyNoTexture) &&
-		m_programMesh.initFragmentShaderSourceFromString(s_fshSkyNoTexture) &&
-		m_programMesh.link()))
+	if(m_programMesh.initVertexShaderSourceFromString(s_vshSkyNoTexture) &&
+		m_programMesh.initFragmentShaderSourceFromString(s_fshSkyNoTexture))
+	{
+		m_programMesh.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
+	}
+
+	if(!m_programMesh.link())
 	{
 		LOG_ERROR("WYSky : Program link failed!\n");
 		return false;
 	}
 
-	m_vertAttribLocation = 0;
-	m_program.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
-	m_programMesh.bindAttributeLocation(paramVertexPositionName, m_vertAttribLocation);
 	htCheckGLError("WYSky::initPrograms");
 	return true;
 }
