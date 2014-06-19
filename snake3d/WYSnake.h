@@ -39,8 +39,9 @@ public:
 	void drawSnakeWithMesh(const HTAlgorithm::Mat4& mvp);
 
 	void move(float motion);
-	void turnLeft();
-	void turnRight();
+	inline void turnLeft() { m_nextTurn = Turn_Left; }
+	inline void turnRight() { m_nextTurn = Turn_Right; }
+	inline void goAhead() { m_nextTurn = Turn_None; }
 
 protected:
 	static const char* const paramModelviewMatrixName;
@@ -57,13 +58,17 @@ protected:
 	GLuint genModelBySkeleton(); //根据骨骼生成模型
 //	GLuint genFacesBySkeleton();
 
+	enum SnakeTurning { Turn_None, Turn_Left, Turn_Right };
+
 protected:
 	GLuint m_snakeVBO, m_snakeDirVBO, m_snakeRelDataVBO, m_snakeIndexVBO;
 	GLuint m_snakeVertIndexSize;
-	std::vector<SnakeBody> m_snakeSkeleton;
+	std::vector<SnakeBody> m_snakeSkeleton[2];
 	ProgramObject m_program, m_programMesh;
 	GLuint m_vertAttribLocation, m_dirAttribLocation, m_relDataAttribLocation;
 	GLuint m_snakeTexture;
+	SnakeTurning m_nextTurn;
+	int m_skeletonIndex;
 };
 
 

@@ -189,16 +189,16 @@ void WYSceneWindow::keyPressEvent(QKeyEvent *e)
 
 	switch (e->key())
 	{
-	case Qt::Key_Left: case Qt::Key_A:
+	case Qt::Key_Left:
 		goLeft(motion);
 		break;
-	case Qt::Key_Right: case Qt::Key_D:
+	case Qt::Key_Right:
 		goRight(motion);
 		break;
-	case Qt::Key_Up: case Qt::Key_W:
+	case Qt::Key_Up:
 		goForward(motion);
 		break;
-	case Qt::Key_Down: case Qt::Key_S:
+	case Qt::Key_Down:
 		goBack(motion);
 		break;
 	case Qt::Key_J:
@@ -210,8 +210,21 @@ void WYSceneWindow::keyPressEvent(QKeyEvent *e)
 	case Qt::Key_Space:
 		m_bDrawWithMesh = !m_bDrawWithMesh;
 		break;
-	case Qt::Key_Enter: case Qt::Key_Return:
-		m_snake->move(motion);
+	case Qt::Key_W:
+		m_snake->move(0.01f);
+		m_snake->move(0.01f);
+		m_snake->move(0.01f);
+		m_snake->move(0.01f);
+		m_snake->move(0.01f);
+		m_snake->move(0.01f);
+		m_snake->move(0.01f);
+		m_snake->move(0.01f);
+		break;
+	case Qt::Key_A:
+		m_snake->turnLeft();
+		break;
+	case Qt::Key_D:
+		m_snake->turnRight();
 		break;
 	default:
 		return;

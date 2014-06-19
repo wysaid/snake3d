@@ -91,24 +91,26 @@ void WYGround::genCube(std::vector<HTAlgorithm::Vec3f>& vertexData, std::vector<
 	using HTAlgorithm::Vec3f;
 	const float widthStep = 1.0f;
 	const float heightStep = 1.0f;
-	const float halfWidth = width;
-	const float halfHeight = height;
+	const float halfBlockXWidth = widthStep / 2.0f;
+	const float halfBlockYWidth = heightStep / 2.0f;
+	const float halfWidth = width / 2.0f;
+	const float halfHeight = height / 2.0f;
 
-	const Vec3f v(x * widthStep * 2.0f - halfWidth, y * heightStep * 2.0f - halfHeight, 0.0f);
+	const Vec3f v(x * widthStep - halfWidth, y * heightStep - halfHeight, 0.0f);
 
 	const std::vector<Vec3f>::size_type index = vertexData.size(), indexUp = index + 4;
 
-	vertexData.push_back(v + Vec3f(-widthStep, heightStep, 0.0f));
-	vertexData.push_back(v - Vec3f(widthStep, heightStep, 0.0f));
-	vertexData.push_back(v + Vec3f(widthStep, -heightStep, 0.0f));
-	vertexData.push_back(v + Vec3f(widthStep, heightStep, 0.0f));
+	vertexData.push_back(v + Vec3f(-halfBlockXWidth, halfBlockYWidth, 0.0f));
+	vertexData.push_back(v - Vec3f(halfBlockXWidth, halfBlockYWidth, 0.0f));
+	vertexData.push_back(v + Vec3f(halfBlockXWidth, -halfBlockYWidth, 0.0f));
+	vertexData.push_back(v + Vec3f(halfBlockXWidth, halfBlockYWidth, 0.0f));
 
 	const float z = 1.0f;
 
-	vertexData.push_back(v + Vec3f(-widthStep, heightStep, z));
-	vertexData.push_back(v - Vec3f(widthStep, heightStep, -z));
-	vertexData.push_back(v + Vec3f(widthStep, -heightStep, z));
-	vertexData.push_back(v + Vec3f(widthStep, heightStep, z));
+	vertexData.push_back(v + Vec3f(-halfBlockXWidth, halfBlockYWidth, z));
+	vertexData.push_back(v - Vec3f(halfBlockXWidth, halfBlockYWidth, -z));
+	vertexData.push_back(v + Vec3f(halfBlockXWidth, -halfBlockYWidth, z));
+	vertexData.push_back(v + Vec3f(halfBlockXWidth, halfBlockYWidth, z));
 
 	//////////////////////////////////////////////////////////////////////////
 
@@ -151,8 +153,8 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 
 	const float widthStep = 1.0f;
 	const float heightStep = 1.0f;
-	const float halfWidth = w;
-	const float halfHeight = h;
+	const float halfWidth = w / 2.0f;
+	const float halfHeight = h / 2.0f;
 
 	m_groundVertices.resize((w + 1) * (h + 1));
 	int index = 0;
@@ -162,7 +164,7 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 
 		for(int j = 0; j <= w; ++j)
 		{
-			const HTAlgorithm::Vec3f v(j * widthStep * 2.0f - halfWidth, heightI * 2.0f - halfHeight, 0.0f);
+			const HTAlgorithm::Vec3f v(j * widthStep - halfWidth, heightI - halfHeight, 0.0f);
 			m_groundVertices[index++] = v;
 		}
 	}
