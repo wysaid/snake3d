@@ -140,8 +140,9 @@ bool WYSnake::init(float x, float y, const char* texName, float len, float xNorm
 		const Vec2f coord(pos - v);
 		const SnakeBody bd(coord[0], norm[0], coord[1], norm[1], SNAKE_DEFAULT_HEIGHT, SNAKE_DEFAULT_ZNORM);
 		m_snakeSkeleton[0].push_back(bd);
+		m_snakeSkeleton[1].push_back(bd);
 	}
-	m_snakeSkeleton[1] = m_snakeSkeleton[0];
+	
 	initSnakeBuffers();
 	return initPrograms() && initSnakeTexture(texName);
 }
@@ -210,12 +211,14 @@ GLuint WYSnake::genModelBySkeleton()
 	std::vector<Vec3f> snakeDir;
 	std::vector<Vec2f> snakeRelData;
 	std::vector<SnakeBody>& snakeSkeleton = m_snakeSkeleton[m_skeletonIndex];
-	int snakeDataSize = snakeSkeleton.size() * SNAKE_PERIMETER_VERTEX_SIZE;
+	int snakeDataSize = snakeSkeleton.size() * SNAKE_PERIMETER_VERTEX_SIZE + 1; //加蛇头
+
  	snakeVertices.resize(snakeDataSize);
 	snakeDir.resize(snakeDataSize);
 	snakeRelData.resize(snakeDataSize);
 
 	const int sz = (int)snakeSkeleton.size() - 1;
+
 	int index = 0;
 
 	for(int i = 1; i < sz; ++i)
@@ -232,10 +235,34 @@ GLuint WYSnake::genModelBySkeleton()
 		}
 	}
 
-	index = 0;
+	snakeVertices[index] = snakeSkeleton[0].pos;
+	snakeDir[index] = snakeSkeleton[0].pos - snakeSkeleton[1].pos;
+	snakeRelData[index] = Vec2f(-1.0f / 4.0f, 0.0f);
+
+	int snakeHeadIndex = index;
+	
 	std::vector<unsigned short> meshIndexes;
-	GLuint indexSize = (sz - 2) * (SNAKE_PERIMETER_VERTEX_SIZE - 1) * 6;
+	GLuint indexSize = (sz - 2) * (SNAKE_PERIMETER_VERTEX_SIZE - 1) * 6 + SNAKE_PERIMETER_VERTEX_SIZE * 3;
 	meshIndexes.resize(indexSize);
+	
+	index = 0;
+
+	//蛇头
+	{
+		const int pos1 = snakeHeadIndex;
+
+		for(int j = 0; j < SNAKE_PERIMETER_VERTEX_SIZE - 1; ++j)
+		{
+			meshIndexes[index] = pos1;
+			meshIndexes[index + 1] = j;
+			meshIndexes[index + 2] = j + 1;
+			index += 3;
+		}
+		meshIndexes[index] = pos1;
+		meshIndexes[index + 1] = SNAKE_PERIMETER_VERTEX_SIZE - 1;
+		meshIndexes[index + 2] = 0;
+		index += 3;
+	}	
 
 	for(int i = 0; i < sz - 2; ++i)
 	{
@@ -296,8 +323,8 @@ void WYSnake::move(float motion)
 		Vec3f& v = iterRead->pos;
 		Vec3f& dvR = iterRead->dPos;
 		Vec3f& dvW = iterWrite->dPos;
-		if(fabsf(dvR[0]) > 0.1 && fabsf(v[0] - int(v[0]) < 0.02) ||
-			fabsf(dvR[1]) > 0.1 && fabsf(v[1] - int(v[1]) < 0.02))
+		if((fabsf(dvR[0]) > 0.1 && fabsf(v[0] - int(v[0]) < 0.02)) ||
+			(fabsf(dvR[1]) > 0.1 && fabsf(v[1] - int(v[1]) < 0.02)))
 		{
 // 			v[0] = int(v[0]);
 // 			v[1] = int(v[1]);
@@ -322,16 +349,25 @@ void WYSnake::move(float motion)
 		const SnakeBody& prev = *(iterRead - 1);
 		const SnakeBody& next = *(iterRead + 1);
 		const SnakeBody& nowR = *iterRead;
-		const Vec3f norm1 = prev.pos - nowR.pos;
-		const Vec3f norm2 = next.pos - nowR.pos;
-		SnakeBody& nowW = *iterWrite;
-		nowW.pos = nowR.pos + nowR.dPos * motion;
+		
 
-		if(norm1.dot(norm2) > 0.0f)
+		SnakeBody& nowW = *iterWrite;
+
+		Vec3f nextPos = nowR.pos + nowR.dPos * motion;
+
+		const Vec3f norm1 = (prev.pos + prev.dPos * motion) - nextPos;
+		const Vec3f norm2 = (next.pos + next.dPos * motion) - nextPos;
+		const Vec3f& v = nextPos;
+		const Vec3f& dvR = nowR.dPos;
+
+		if(norm1.dot(norm2) >= 0.0f &&
+			(fabsf(dvR[0]) > 0.1 && fabsf(v[0] - int(v[0]) < 0.02)) ||
+			(fabsf(dvR[1]) > 0.1 && fabsf(v[1] - int(v[1]) < 0.02)))
 		{
 			nowW.dPos = prev.dPos;
 		}
-			
+
+		nowW.pos = nowR.pos + nowR.dPos * motion;
 	}
 	
 	if(snakeSkeletonWrite.size() > 1)
@@ -344,7 +380,7 @@ void WYSnake::move(float motion)
 			iterWriteEnd->dPos = (iterReadEnd - 1)->dPos;
 		}		
 	}
-//	snakeSkeletonRead = snakeSkeletonWrite;
+	snakeSkeletonRead = snakeSkeletonWrite;
 }
 
 bool WYSnake::initSnakeTexture(const char* texName)
