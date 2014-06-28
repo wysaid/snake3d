@@ -124,7 +124,7 @@ void WYSceneWindow::initializeGL()
 
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), SLOT(updateGL()));
-	timer->start(20);
+	timer->start(15);
 
 	glEnable(GL_DEPTH_TEST);
 	
