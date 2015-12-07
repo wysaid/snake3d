@@ -19,11 +19,12 @@ RESOURCES += wymainwindow.qrc
 
 SOURCES += main.cpp\
     wymainwindow.cpp \
-    WYScenewindow.cpp \
     WYGround.cpp\
     htPlatform_QT.cpp \
     htShaderFunctions.cpp \
     WYSky.cpp \
+    WYSceneWindow.cpp \
+    WYSnake.cpp
 
 HEADERS  += wymainwindow.h \
     WYScenewindow.h \
@@ -36,6 +37,7 @@ HEADERS  += wymainwindow.h \
     WYStages.h\
     htShaderFunctions.h \
     WYSky.h\
+    WYSnake.h
 
 FORMS    += wymainwindow.ui
 
