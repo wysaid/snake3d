@@ -9,14 +9,14 @@
 #define _HT_VEC_H_
 
 #include <cmath>
-#include "htStaticAssert.h"
+#define wyStaticAssert(con) static_assert(con, "Invalid Parameters!")
 
 #define HT_VEC_CLAMP(n, low, high) do{\
 if(n < low) n = low;\
 else if(n > high) n = high;\
 }while(0)\
 
-namespace HTAlgorithm
+namespace wy
 {
 	//Only for class Vec.
 	template<typename V, int DIM>
@@ -655,7 +655,7 @@ namespace HTAlgorithm
 
 }
 
-namespace HTAlgorithm
+namespace wy
 {
 
 	template<typename Type, int DIM>
@@ -665,31 +665,31 @@ namespace HTAlgorithm
 		enum { VEC_DIM = DIM };
 		typedef Type VecDataType;
 
-		Vec() { htStaticAssert(DIM > 0 && DIM <= 4);}
+        Vec() { wyStaticAssert(DIM > 0 && DIM <= 4);}
 		Vec(const Vec& v) { VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_assign(*this, v); }
 		Vec(Type x)
 		{
-			htStaticAssert(DIM == 1); //DIM should be 1
+            wyStaticAssert(DIM == 1); //DIM should be 1
 			m_data[0] = x;
 		}
 
 		Vec(Type x, Type y)
 		{
-			htStaticAssert(DIM == 2); //DIM should be 2
+            wyStaticAssert(DIM == 2); //DIM should be 2
 			m_data[0] = x;
 			m_data[1] = y;
 		}
 
 		Vec(Type x, Type y, Type z)
 		{
-			htStaticAssert(DIM == 3); //DIM should be 3
+            wyStaticAssert(DIM == 3); //DIM should be 3
 			m_data[0] = x;
 			m_data[1] = y;
 			m_data[2] = z;
 		}
 		Vec(Type x, Type y, Type z, Type w)
 		{
-			htStaticAssert(DIM == 4); //DIM should be 4
+            wyStaticAssert(DIM == 4); //DIM should be 4
 			m_data[0] = x;
 			m_data[1] = y;
 			m_data[2] = z;
@@ -831,23 +831,23 @@ namespace HTAlgorithm
 			VecAlgorithmHelp<Vec<Type, DIM>, DIM>::_clamp(*this, low, high);
 		}
 
-		inline Type& x() { htStaticAssert(DIM >= 1); return m_data[0]; }
-		inline Type& y() { htStaticAssert(DIM >= 2); return m_data[1]; }
-		inline Type& z() { htStaticAssert(DIM >= 3); return m_data[2]; }
-		inline Type& w() { htStaticAssert(DIM >= 4); return m_data[3]; }
-		inline Type& r() { htStaticAssert(DIM >= 1); return m_data[0]; }
-		inline Type& g() { htStaticAssert(DIM >= 2); return m_data[1]; }
-		inline Type& b() { htStaticAssert(DIM >= 3); return m_data[2]; }
-		inline Type& a() { htStaticAssert(DIM >= 4); return m_data[3]; }
+        inline Type& x() { wyStaticAssert(DIM >= 1); return m_data[0]; }
+        inline Type& y() { wyStaticAssert(DIM >= 2); return m_data[1]; }
+        inline Type& z() { wyStaticAssert(DIM >= 3); return m_data[2]; }
+        inline Type& w() { wyStaticAssert(DIM >= 4); return m_data[3]; }
+        inline Type& r() { wyStaticAssert(DIM >= 1); return m_data[0]; }
+        inline Type& g() { wyStaticAssert(DIM >= 2); return m_data[1]; }
+        inline Type& b() { wyStaticAssert(DIM >= 3); return m_data[2]; }
+        inline Type& a() { wyStaticAssert(DIM >= 4); return m_data[3]; }
 
-		inline const Type& x() const { htStaticAssert(DIM >= 1); return m_data[0]; }
-		inline const Type& y() const { htStaticAssert(DIM >= 2); return m_data[1]; }
-		inline const Type& z() const { htStaticAssert(DIM >= 3); return m_data[2]; }
-		inline const Type& w() const { htStaticAssert(DIM >= 4); return m_data[3]; }
-		inline const Type& r() const { htStaticAssert(DIM >= 1); return m_data[0]; }
-		inline const Type& g() const { htStaticAssert(DIM >= 2); return m_data[1]; }
-		inline const Type& b() const { htStaticAssert(DIM >= 3); return m_data[2]; }
-		inline const Type& a() const { htStaticAssert(DIM >= 4); return m_data[3]; }
+        inline const Type& x() const { wyStaticAssert(DIM >= 1); return m_data[0]; }
+        inline const Type& y() const { wyStaticAssert(DIM >= 2); return m_data[1]; }
+        inline const Type& z() const { wyStaticAssert(DIM >= 3); return m_data[2]; }
+        inline const Type& w() const { wyStaticAssert(DIM >= 4); return m_data[3]; }
+        inline const Type& r() const { wyStaticAssert(DIM >= 1); return m_data[0]; }
+        inline const Type& g() const { wyStaticAssert(DIM >= 2); return m_data[1]; }
+        inline const Type& b() const { wyStaticAssert(DIM >= 3); return m_data[2]; }
+        inline const Type& a() const { wyStaticAssert(DIM >= 4); return m_data[3]; }
 
 		inline Type& get(int index) { return m_data[index]; }
 		inline const Type& get(int index) const { return m_data[index]; }

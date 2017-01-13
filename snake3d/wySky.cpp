@@ -7,7 +7,7 @@
  *        Blog: http://blog.wysaid.org
 */
 
-#include "WYSky.h"
+#include "wySky.h"
 
 #define SKY_TEXTURE_ID GL_TEXTURE2
 #define SKY_TEXTURE_INDEX (SKY_TEXTURE_ID - GL_TEXTURE0)
@@ -90,7 +90,7 @@ bool WYSky::initSky(const char* texName)
 	const float radiusStep = SKY_RADIUS / SKY_RADIUS_VERTEX_SIZE;
 	const float radianStep = (M_PI * 2.0f) / SKY_PERIMETER_CLIP_SIZE;
 
-	std::vector<HTAlgorithm::Vec3f> skyVertices;
+	std::vector<wy::Vec3f> skyVertices;
 	skyVertices.resize(SKY_RADIUS_VERTEX_SIZE * (SKY_PERIMETER_CLIP_SIZE + 1) + 1);
 	int index = 0;
 	for(int i = 0; i < SKY_RADIUS_VERTEX_SIZE; ++i)
@@ -100,10 +100,10 @@ bool WYSky::initSky(const char* texName)
 		for(int j = 0; j <= SKY_PERIMETER_CLIP_SIZE; ++j)
 		{
 			const float rad = radianStep * j;
-			skyVertices[index++] = HTAlgorithm::Vec3f(cosf(rad) * dis, sinf(rad) * dis, z);
+			skyVertices[index++] = wy::Vec3f(cosf(rad) * dis, sinf(rad) * dis, z);
 		}
 	}
-	skyVertices[index] = HTAlgorithm::Vec3f(0.0f, 0.0f, SKY_RADIUS);
+	skyVertices[index] = wy::Vec3f(0.0f, 0.0f, SKY_RADIUS);
 
 	glGenBuffers(1, &m_skyVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_skyVBO);
@@ -154,7 +154,7 @@ bool WYSky::initSky(const char* texName)
 	return initPrograms() && initSkyTexture(texName);
 }
 
-void WYSky::drawSky(const HTAlgorithm::Mat4& mvp)
+void WYSky::drawSky(const wy::Mat4& mvp)
 {
 	if(m_skyTexture == 0)
 		return drawSkyWithMesh(mvp);
@@ -178,7 +178,7 @@ void WYSky::drawSky(const HTAlgorithm::Mat4& mvp)
 
 }
 
-void WYSky::drawSkyWithMesh(const HTAlgorithm::Mat4& mvp)
+void WYSky::drawSkyWithMesh(const wy::Mat4& mvp)
 {
 	m_programMesh.bind();
 	m_program.sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);

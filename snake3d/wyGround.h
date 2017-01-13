@@ -9,7 +9,7 @@
 #ifndef _GROUND_H_
 #define _GROUND_H_
 
-#include "htShaderFunctions.h"
+#include "wyShaderFunctions.h"
 
 class WYGround
 {
@@ -20,8 +20,8 @@ public:
 	bool initWithStage(const int *stage, int w, int h, const char* texName = NULL);
 	void clearGround();
 
-	void drawGround(const HTAlgorithm::Mat4& mvp);
-	void drawGroundWithMesh(const HTAlgorithm::Mat4& mvp);
+    void drawGround(const wy::Mat4& mvp);
+    void drawGroundWithMesh(const wy::Mat4& mvp);
 
 protected:
 	static const char* const paramModelviewMatrixName;
@@ -34,12 +34,12 @@ protected:
 	bool initPrograms();
 	bool initProgramsNoTexture();
 
-	static void genCube(std::vector<HTAlgorithm::Vec3f>& vertexData, std::vector<unsigned short>& indexData, float x, float y, float width, float height);
+    static void genCube(std::vector<wy::Vec3f>& vertexData, std::vector<unsigned short>& indexData, float x, float y, float width, float height);
 
 protected:
 	GLuint m_groundVBO, m_groundIndexVBO, m_groundMeshIndexVBO;
-	std::vector<HTAlgorithm::Vec3f> m_groundVertices;
-//	HTAlgorithm::Vec2f m_groundSize;
+    std::vector<wy::Vec3f> m_groundVertices;
+//	wy::Vec2f m_groundSize;
 	GLuint m_groundIndexSize, m_meshIndexSize;
 	GLuint m_groundTexture;
 	ProgramObject m_program, m_programMesh;

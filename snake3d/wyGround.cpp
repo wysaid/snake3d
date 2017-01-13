@@ -6,7 +6,7 @@
  *        Mail: admin@wysaid.org
 */
 
-#include "WYGround.h"
+#include "wyGround.h"
 
 #define GROUND_TEXTURE_ID GL_TEXTURE1
 #define GROUND_TEXTURE_INDEX (GROUND_TEXTURE_ID - GL_TEXTURE0)
@@ -86,9 +86,9 @@ WYGround::~WYGround()
 	clearGround();
 }
 
-void WYGround::genCube(std::vector<HTAlgorithm::Vec3f>& vertexData, std::vector<unsigned short>& indexData, float x, float y, float width, float height)
+void WYGround::genCube(std::vector<wy::Vec3f>& vertexData, std::vector<unsigned short>& indexData, float x, float y, float width, float height)
 {
-	using HTAlgorithm::Vec3f;
+    using wy::Vec3f;
 	const float widthStep = 1.0f;
 	const float heightStep = 1.0f;
 	const float halfBlockXWidth = widthStep / 2.0f;
@@ -164,7 +164,7 @@ bool WYGround::initWithStage(const int *stage, int w, int h, const char* texName
 
 		for(int j = 0; j <= w; ++j)
 		{
-			const HTAlgorithm::Vec3f v(j * widthStep - halfWidth, heightI - halfHeight, 0.0f);
+            const wy::Vec3f v(j * widthStep - halfWidth, heightI - halfHeight, 0.0f);
 			m_groundVertices[index++] = v;
 		}
 	}
@@ -291,7 +291,7 @@ void WYGround::clearGround()
 
 }
 
-void WYGround::drawGround(const HTAlgorithm::Mat4& mvp)
+void WYGround::drawGround(const wy::Mat4& mvp)
 {
 	m_program.bind();
 	m_program.sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);
@@ -314,7 +314,7 @@ void WYGround::drawGround(const HTAlgorithm::Mat4& mvp)
 	htCheckGLError("drawGround");
 }
 
-void WYGround::drawGroundWithMesh(const HTAlgorithm::Mat4& mvp)
+void WYGround::drawGroundWithMesh(const wy::Mat4& mvp)
 {
 	m_programMesh.bind();
 	m_programMesh.sendUniformMat4x4(paramModelviewMatrixName, 1, GL_FALSE, mvp[0]);

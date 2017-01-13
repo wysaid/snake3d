@@ -6,7 +6,7 @@
  *        Mail: admin@wysaid.org
 */
 
-#include "htShaderFunctions.h"
+#include "wyShaderFunctions.h"
 
 #define GETUNIFORM(uniform, programID, name) \
 GLint uniform = glGetUniformLocation(programID, name);\

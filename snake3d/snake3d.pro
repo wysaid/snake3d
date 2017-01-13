@@ -19,25 +19,25 @@ RESOURCES += wymainwindow.qrc
 
 SOURCES += main.cpp\
     wymainwindow.cpp \
-    WYGround.cpp\
-    htPlatform_QT.cpp \
-    htShaderFunctions.cpp \
-    WYSky.cpp \
-    WYSceneWindow.cpp \
-    WYSnake.cpp
+    wyGround.cpp \
+    wySceneWindow.cpp \
+    wySky.cpp \
+    wySnake.cpp \
+    wyShaderFunctions.cpp \
+    wyPlatform_QT.cpp
 
 HEADERS  += wymainwindow.h \
-    WYScenewindow.h \
-    htPlatform_QT.h \
-    htGLFunctions.h \
-    WYGround.h \
-    htMat.h\
-    htVec.h\
-    htStaticAssert.h\
-    WYStages.h\
-    htShaderFunctions.h \
-    WYSky.h\
-    WYSnake.h
+    wyGLFunctions.h \
+    wyGLFunctions.h \
+    wyMat.h \
+    wyPlatform_QT.h \
+    wyShaderFunctions.h \
+    wyVec.h \
+    wyStages.h \
+    wySnake.h \
+    wySky.h \
+    wyGround.h \
+    wyScenewindow.h
 
 FORMS    += wymainwindow.ui
 

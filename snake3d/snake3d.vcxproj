@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -17,11 +17,11 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -97,10 +97,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="WYGround.cpp" />
-    <ClCompile Include="htPlatform_QT.cpp" />
-    <ClCompile Include="htShaderFunctions.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="wyPlatform_QT.cpp" />
     <ClCompile Include="WYSceneWindow.cpp" />
+    <ClCompile Include="wyShaderFunctions.cpp" />
     <ClCompile Include="WYSky.cpp" />
     <ClCompile Include="wymainwindow.cpp" />
     <ClCompile Include="WYSnake.cpp" />
@@ -132,22 +132,7 @@
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_wymainwindow.h" />
     <ClInclude Include="WYGround.h" />
-    <CustomBuild Include="htGLFunctions.h">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </Command>
-    </CustomBuild>
-    <ClInclude Include="htMat.h" />
-    <ClInclude Include="htPlatform_QT.h" />
+    <ClInclude Include="wyVec.h" />
     <CustomBuild Include="WYSceneWindow.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing WYSceneWindow.h...</Message>
@@ -158,9 +143,9 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DQT_OPENGL_ES_2 -DQT_OPENGL_ES_2_ANGLE -D_USE_CXX11_STATIC_ASSERT_ -DQT_OPENGL_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtAngle" "-I$(QTDIR)\include\QtOpenGL"</Command>
     </CustomBuild>
-    <ClInclude Include="htShaderFunctions.h" />
-    <ClInclude Include="htStaticAssert.h" />
-    <ClInclude Include="htVec.h" />
+    <ClInclude Include="wyMat.h" />
+    <ClInclude Include="wyPlatform_QT.h" />
+    <ClInclude Include="wyShaderFunctions.h" />
     <ClInclude Include="WYSky.h" />
     <ClInclude Include="WYSnake.h" />
     <ClInclude Include="WYStages.h" />

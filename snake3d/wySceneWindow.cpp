@@ -50,8 +50,8 @@ WYSceneWindow::WYSceneWindow(QWidget* parent) : QGLWidget(parent), m_ground(NULL
 	setAttribute(Qt::WA_NoSystemBackground);
 	setAutoBufferSwap(false);
 
-	m_v2Position = HTAlgorithm::Vec2f(0.0f, 0.0f);
-	m_v2Direction = HTAlgorithm::Vec2f(0.0f, m_farAway);
+    m_v2Position = wy::Vec2f(0.0f, 0.0f);
+    m_v2Direction = wy::Vec2f(0.0f, m_farAway);
 
 	m_m4Projection.loadIdentity();
 	updateModelView();
@@ -69,7 +69,7 @@ void WYSceneWindow::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	HTAlgorithm::Mat4 qmat = m_m4Projection * m_m4ModelView;
+    wy::Mat4 qmat = m_m4Projection * m_m4ModelView;
 	
 	if(m_bDrawWithMesh)
 	{
@@ -157,7 +157,7 @@ void WYSceneWindow::mouseMoveEvent(QMouseEvent *e)
 	if(!m_bIsMouseDown)
 		return;
 	
-	using namespace HTAlgorithm;
+    using namespace wy;
 
 	//m_modelView.rotateZ((m_lastX - e->x()) / 180.0f);
 
@@ -183,7 +183,7 @@ void WYSceneWindow::mouseReleaseEvent(QMouseEvent *e)
 
 void WYSceneWindow::keyPressEvent(QKeyEvent *e)
 {
-	using namespace HTAlgorithm;
+    using namespace wy;
 
 	float motion = 0.2f;
 
@@ -264,49 +264,49 @@ GLuint WYSceneWindow::genTextureWithBuffer(const void* bufferData, GLint w, GLin
 
 void WYSceneWindow::initOrtho(int w, int h)
 {
-	m_m4Projection = HTAlgorithm::Mat4::makeOrtho(-1.0, 1.0, -1.0, 1.0, 1.0, -1.0);
+    m_m4Projection = wy::Mat4::makeOrtho(-1.0, 1.0, -1.0, 1.0, 1.0, -1.0);
 }
 
 void WYSceneWindow::initPerspective(int w, int h)
 {	
 	float aspectRatio = w / float(h);
 	float z = HT_MIN(width(), height());
-	m_m4Projection = HTAlgorithm::Mat4::makePerspective(m_fovyRad, aspectRatio, .1f, 10000.0f);
+    m_m4Projection = wy::Mat4::makePerspective(m_fovyRad, aspectRatio, .1f, 10000.0f);
 }
 
 void WYSceneWindow::updateModelView()
 {
-	using namespace HTAlgorithm;
+    using namespace wy;
 	const Vec2f v2Dir = m_v2Position + m_v2Direction;
 	const float len = v2Dir.length();
 	const Vec2f v2DirBack = v2Dir * (- m_headUp / len);
 	
-	m_m4ModelView = HTAlgorithm::Mat4::makeLookAt(m_v2Position[0], m_v2Position[1], m_zHeight, v2Dir[0], v2Dir[1], m_headUp, v2DirBack[0], v2DirBack[1], len);
+    m_m4ModelView = wy::Mat4::makeLookAt(m_v2Position[0], m_v2Position[1], m_zHeight, v2Dir[0], v2Dir[1], m_headUp, v2DirBack[0], v2DirBack[1], len);
 	
 }
 
 void WYSceneWindow::goForward(float dis)
 {
-	HTAlgorithm::Vec2f tmp(m_v2Direction);
+    wy::Vec2f tmp(m_v2Direction);
 	m_v2Position += tmp.normalize() * dis;
 }
 
 void WYSceneWindow::goBack(float dis)
 {
-	HTAlgorithm::Vec2f tmp(m_v2Direction);
+    wy::Vec2f tmp(m_v2Direction);
 	m_v2Position -= tmp.normalize() * dis;
 }
 
 void WYSceneWindow::goLeft(float dis)
 {
-	HTAlgorithm::Vec2f tmp(m_v2Direction);
+    wy::Vec2f tmp(m_v2Direction);
 	tmp.normalize();
-	m_v2Position += HTAlgorithm::Vec2f(-tmp[1], tmp[0]) * dis;
+    m_v2Position += wy::Vec2f(-tmp[1], tmp[0]) * dis;
 }
 
 void WYSceneWindow::goRight(float dis)
 {
-	HTAlgorithm::Vec2f tmp(m_v2Direction);
+    wy::Vec2f tmp(m_v2Direction);
 	tmp.normalize();
-	m_v2Position += HTAlgorithm::Vec2f(tmp[1], -tmp[0]) * dis;
+    m_v2Position += wy::Vec2f(tmp[1], -tmp[0]) * dis;
 }

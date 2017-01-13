@@ -6,7 +6,7 @@
  *  Description: be compatible with none-angle qt versions.
  */
 
-#include "htPlatform_QT.h"
+#include "wyPlatform_QT.h"
 
 #if !defined(QT_OPENGL_ES_2) && !defined(Q_OS_MAC)
 

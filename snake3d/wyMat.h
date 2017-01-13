@@ -11,14 +11,13 @@
 #define _HT_MAT_H_
 
 #include <cmath>
-#include "htStaticAssert.h"
-#include "htVec.h"
+#include "wyVec.h"
 
 #ifndef M_PI
 #define M_PI 3.1415926589793f
 #endif
 
-namespace HTAlgorithm
+namespace wy
 {
 	inline void normalize(float& x, float& y, float& z)
 	{

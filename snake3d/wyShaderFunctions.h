@@ -8,7 +8,7 @@
 #ifndef _HTSAHDERFUNCTIONS_H_
 #define _HTSAHDERFUNCTIONS_H_
 
-#include "htGLFunctions.h"
+#include "wyGLFunctions.h"
 
 class ShaderObject
 {

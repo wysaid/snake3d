@@ -7,7 +7,7 @@
  * Description: First time to use skeleton animation, and I'll use my own method.
 */
 
-#include "WYSnake.h"
+#include "wySnake.h"
 
 #define SNAKE_TEXTURE_ID GL_TEXTURE2
 #define SNAKE_TEXTURE_INDEX (SNAKE_TEXTURE_ID - GL_TEXTURE0)
@@ -120,7 +120,7 @@ WYSnake::~WYSnake()
 bool WYSnake::init(float x, float y, const char* texName, float len, float xNorm, float yNorm)
 {
 	clearSnakeBuffers();
-	using namespace HTAlgorithm;
+    using namespace wy;
 	Vec2f norm(xNorm, yNorm);
 	Vec2f pos(x, y);
 	norm.normalize();
@@ -147,7 +147,7 @@ bool WYSnake::init(float x, float y, const char* texName, float len, float xNorm
 	return initPrograms() && initSnakeTexture(texName);
 }
 
-void WYSnake::drawSnake(const HTAlgorithm::Mat4& mvp)
+void WYSnake::drawSnake(const wy::Mat4& mvp)
 {
 	GLuint indexSize = genModelBySkeleton();
 	m_program.bind();
@@ -173,7 +173,7 @@ void WYSnake::drawSnake(const HTAlgorithm::Mat4& mvp)
 	htCheckGLError("drawSnake");
 }
 
-void WYSnake::drawSnakeWithMesh(const HTAlgorithm::Mat4& mvp)
+void WYSnake::drawSnakeWithMesh(const wy::Mat4& mvp)
 {
 	GLuint indexSize = genModelBySkeleton();
 	m_programMesh.bind();
@@ -202,7 +202,7 @@ void WYSnake::drawSnakeWithMesh(const HTAlgorithm::Mat4& mvp)
 
 GLuint WYSnake::genModelBySkeleton()
 {
-	using namespace HTAlgorithm;
+    using namespace wy;
 
 	const float lengthStep = 1.0f / SNAKE_VERTEX_PER_UNIT;
 	const float radianStep = (M_PI * 2.0f) / (SNAKE_PERIMETER_VERTEX_SIZE - 1);
@@ -299,7 +299,7 @@ GLuint WYSnake::genModelBySkeleton()
 
 void WYSnake::move(float motion)
 {
-	using namespace HTAlgorithm;
+    using namespace wy;
 	std::vector<SnakeBody>& snakeSkeletonRead = m_snakeSkeleton[m_skeletonIndex];
 	(++m_skeletonIndex) %= 2;
 	std::vector<SnakeBody>& snakeSkeletonWrite = m_snakeSkeleton[m_skeletonIndex];

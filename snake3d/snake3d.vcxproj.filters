@@ -53,12 +53,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_wymainwindow.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="htPlatform_QT.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="htShaderFunctions.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
     <ClCompile Include="WYSceneWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -77,6 +71,12 @@
     <ClCompile Include="WYSnake.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="wyPlatform_QT.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="wyShaderFunctions.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="wymainwindow.h">
@@ -88,9 +88,6 @@
     <CustomBuild Include="wymainwindow.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="htGLFunctions.h">
-      <Filter>Utility</Filter>
-    </CustomBuild>
     <CustomBuild Include="WYSceneWindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -98,21 +95,6 @@
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_wymainwindow.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="htPlatform_QT.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="htMat.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="htStaticAssert.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="htVec.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="htShaderFunctions.h">
-      <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="WYGround.h">
       <Filter>Header Files</Filter>
@@ -125,6 +107,18 @@
     </ClInclude>
     <ClInclude Include="WYSnake.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wyMat.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="wyPlatform_QT.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="wyShaderFunctions.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="wyVec.h">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

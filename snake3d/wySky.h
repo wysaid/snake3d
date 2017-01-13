@@ -10,7 +10,7 @@
 #ifndef _SKY_H_
 #define _SKY_H_
 
-#include "htShaderFunctions.h"
+#include "wyShaderFunctions.h"
 
 class WYSky
 {
@@ -20,8 +20,8 @@ public:
 
 	bool initSky(const char* texName = NULL);
 
-	void drawSky(const HTAlgorithm::Mat4& mvp);
-	void drawSkyWithMesh(const HTAlgorithm::Mat4& mvp);
+	void drawSky(const wy::Mat4& mvp);
+	void drawSkyWithMesh(const wy::Mat4& mvp);
 
 protected:
 	static const char* const paramModelviewMatrixName;

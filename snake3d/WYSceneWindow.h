@@ -14,14 +14,14 @@
 #include <QImage>
 
 #include "wymainwindow.h"
-#include "htPlatform_QT.h"
-#include "htGLFunctions.h"
-#include "htShaderFunctions.h"
+#include "wyPlatform_QT.h"
+#include "wyGLFunctions.h"
+#include "wyShaderFunctions.h"
 
-#include "WYStages.h"
-#include "WYGround.h"
-#include "WYSky.h"
-#include "WYSnake.h"
+#include "wyStages.h"
+#include "wyGround.h"
+#include "wySky.h"
+#include "wySnake.h"
 
 using namespace Snake3D;
 
@@ -69,8 +69,8 @@ protected:
 
 
 private:
-	HTAlgorithm::Mat4 m_m4ModelView, m_m4Projection;
-	HTAlgorithm::Vec2f m_v2Direction, m_v2Position;
+	wy::Mat4 m_m4ModelView, m_m4Projection;
+	wy::Vec2f m_v2Direction, m_v2Position;
 
 private:
 	WYGround* m_ground;

@@ -18,10 +18,9 @@
 
 */
 
-#include "htPlatform_QT.h"
-#include "htStaticAssert.h"
-#include "htVec.h"
-#include "htMat.h"
+#include "wyPlatform_QT.h"
+#include "wyVec.h"
+#include "wyMat.h"
 
 #define TEXTURE_START_INDEX 2
 #define TEXTURE_START GL_TEXTURE2
